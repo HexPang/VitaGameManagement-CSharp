@@ -82,6 +82,7 @@ namespace VitaPackageHelper
                     }
                 }
             }
+            GC.Collect();
             return packages;
         }
 

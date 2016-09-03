@@ -35,37 +35,48 @@ namespace VitaGameManagement_CSharp
             ConfigurationManager.AddUpdateAppSettings("library", libraryPath.Text);
             ConfigurationManager.AddUpdateAppSettings("vita_ip", vita_ip.Text);
             ConfigurationManager.AddUpdateAppSettings("vita_port", vita_port.Text);
-            packages = VitaPackageHelper.Helper.loadPackages(libraryPath.Text);
+            this.initGameLibrary();
+            this.reloadSetting();
         }
 
+        private void initGameLibrary()
+        {
+            packages = VitaPackageHelper.Helper.loadPackages(libraryPath.Text);
+            if (packages.Count > 0)
+            {
+                foreach (VitaPackageHelper.VitaPackage package in packages)
+                {
+                    long size = new FileInfo(package.fileName).Length;
+                    string fileSize = String.Format(new FileSizeFormatProvider(), "{0:fs}", size);
+
+                    ListViewItem item = new ListViewItem(new String[] { package.appId, package.sfoData["TITLE"], package.region, fileSize, package.fileName, "OK", package.sfoData["APP_VER"] });
+                    GameListView.Items.Add(item);
+                }
+            }
+        }
+        private void reloadSetting()
+        {
+            if (vita_ip.Text != "" && vita_port.Text != "")
+            {
+                manager = FTPManager.instance(vita_ip.Text, vita_port.Text);
+                manager.StartFTPWorker();
+                ftpStatus.Text = "Starting...";
+            }
+            else
+            {
+                ftpStatus.Text = "Need PSVita IP And Port";
+            }
+        }
         private void MainForm_Load(object sender, EventArgs e)
         {
             libraryPath.Text = ConfigurationManager.ReadSetting("library");
             vita_ip.Text = ConfigurationManager.ReadSetting("vita_ip");
             vita_port.Text = ConfigurationManager.ReadSetting("vita_port");
-            if(vita_ip.Text != "" && vita_port.Text != "")
-            {
-                manager = FTPManager.instance(vita_ip.Text,vita_port.Text);
-                manager.StartFTPWorker();
-                ftpStatus.Text = "Starting...";
-            }else
-            {
-                ftpStatus.Text = "Need PSVita IP And Port";
-            }
+            this.reloadSetting();
             if (libraryPath.Text != "")
             {
                 packages = VitaPackageHelper.Helper.loadPackages(libraryPath.Text);
-                if(packages.Count > 0)
-                {
-                    foreach(VitaPackageHelper.VitaPackage package in packages)
-                    {
-                        long size = new FileInfo(package.fileName).Length;
-                        string fileSize = String.Format(new FileSizeFormatProvider(), "{0:fs}", size);
-
-                        ListViewItem item = new ListViewItem(new String[] { package.appId,package.sfoData["TITLE"],package.region,fileSize,package.fileName,"OK",package.sfoData["APP_VER"] });
-                        GameListView.Items.Add(item);                     
-                    }
-                }
+                this.initGameLibrary();
             }
         }
 

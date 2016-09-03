@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define TRACE
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -88,10 +90,12 @@ namespace VitaGameManagement_CSharp
                         FileInfo fileInf = new FileInfo(queue.file);
                         queue.total = fileInf.Length;
                         currentQueue = queue;
-                        string url = String.Format("ftp://{0}:{1}/ux:0/{2}", ip, port,fileInf.Name);
+                        string url = String.Format("ftp://{0}:{1}/ux0:/{2}", ip, port,fileInf.Name);
                         FtpWebRequest ftp = (FtpWebRequest)WebRequest.Create(url);
                         ftp.Credentials = new NetworkCredential("anonymous", "");
                         ftp.KeepAlive = false;
+                        ftp.UsePassive = true;
+                        
                         ftp.Method = WebRequestMethods.Ftp.UploadFile;
                         ftp.UseBinary = true;
                         // Notify the server about the size of the uploaded file 
@@ -107,6 +111,7 @@ namespace VitaGameManagement_CSharp
                         FileStream fs = fileInf.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
                         // Stream to which the file to be upload is written 
+                       
                         Stream strm = ftp.GetRequestStream();
 
                         // Read from the file stream 2kb at a time 
@@ -125,6 +130,10 @@ namespace VitaGameManagement_CSharp
                         strm.Close();
                         fs.Close();
                         queueList.RemoveAt(0);
+                    }
+                    catch (WebException ex)
+                    {
+                        error = ex.Message;
                     }
                     catch (Exception ex)
                     {
