@@ -51,11 +51,11 @@
             this.uploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.ftpStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.uploadProgress = new System.Windows.Forms.ToolStripProgressBar();
+            this.ftpStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.uploadProgress = new System.Windows.Forms.ToolStripProgressBar();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabPage2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -70,7 +70,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(667, 390);
+            this.tabPage2.Size = new System.Drawing.Size(667, 431);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Settings";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -83,7 +83,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.07692F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.92308F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 69F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel1.Controls.Add(this.vita_ip, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
@@ -108,7 +108,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vita_ip.Location = new System.Drawing.Point(134, 30);
             this.vita_ip.Name = "vita_ip";
-            this.vita_ip.Size = new System.Drawing.Size(433, 21);
+            this.vita_ip.Size = new System.Drawing.Size(432, 21);
             this.vita_ip.TabIndex = 6;
             // 
             // label2
@@ -139,16 +139,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.libraryPath.Location = new System.Drawing.Point(134, 3);
             this.libraryPath.Name = "libraryPath";
-            this.libraryPath.Size = new System.Drawing.Size(433, 21);
+            this.libraryPath.Size = new System.Drawing.Size(432, 21);
             this.libraryPath.TabIndex = 1;
             // 
             // chooseGameFolder
             // 
             this.chooseGameFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.chooseGameFolder.Location = new System.Drawing.Point(573, 3);
+            this.chooseGameFolder.Location = new System.Drawing.Point(572, 3);
             this.chooseGameFolder.Name = "chooseGameFolder";
-            this.chooseGameFolder.Size = new System.Drawing.Size(64, 21);
+            this.chooseGameFolder.Size = new System.Drawing.Size(65, 21);
             this.chooseGameFolder.TabIndex = 2;
             this.chooseGameFolder.Text = "Choose";
             this.chooseGameFolder.UseVisualStyleBackColor = true;
@@ -156,7 +156,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(573, 342);
+            this.button1.Location = new System.Drawing.Point(572, 342);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(62, 27);
             this.button1.TabIndex = 3;
@@ -168,10 +168,10 @@
             // 
             this.vita_port.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.vita_port.Location = new System.Drawing.Point(573, 30);
+            this.vita_port.Location = new System.Drawing.Point(572, 30);
             this.vita_port.MaxLength = 5;
             this.vita_port.Name = "vita_port";
-            this.vita_port.Size = new System.Drawing.Size(64, 21);
+            this.vita_port.Size = new System.Drawing.Size(65, 21);
             this.vita_port.TabIndex = 7;
             // 
             // tabPage1
@@ -279,34 +279,36 @@
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // ftpStatus
-            // 
-            this.ftpStatus.Name = "ftpStatus";
-            this.ftpStatus.Size = new System.Drawing.Size(28, 17);
-            this.ftpStatus.Text = "FTP";
-            // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(76, 17);
             this.toolStripStatusLabel1.Text = "FTP Service:";
             // 
-            // timer1
+            // ftpStatus
             // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.ftpStatus.Name = "ftpStatus";
+            this.ftpStatus.Size = new System.Drawing.Size(28, 17);
+            this.ftpStatus.Text = "FTP";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(397, 17);
+            this.toolStripStatusLabel2.Spring = true;
+            this.toolStripStatusLabel2.Text = "https://github.com/HexPang/VitaGameManagement-CSharp";
             // 
             // uploadProgress
             // 
             this.uploadProgress.Name = "uploadProgress";
             this.uploadProgress.Size = new System.Drawing.Size(150, 16);
             // 
-            // toolStripStatusLabel2
+            // timer1
             // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(447, 17);
-            this.toolStripStatusLabel2.Spring = true;
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // MainForm
             // 

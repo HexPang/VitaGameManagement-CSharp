@@ -29,16 +29,24 @@ namespace VitaPackageHelper
                             if(sfo.Count > 0)
                             {
                                 String contentId = sfo["CONTENT_ID"];
-                                String[] split = contentId.Split('-');
-                                if (split[1].IndexOf('_') > 0)
+                                if(contentId == "")
                                 {
-                                    split = split[1].Split('_');
-                                    contentId = split[0];
+                                    contentId = sfo["TITLE"];
                                 }
                                 else
                                 {
-                                    contentId = split[1];
+                                    String[] split = contentId.Split('-');
+                                    if (split[1].IndexOf('_') > 0)
+                                    {
+                                        split = split[1].Split('_');
+                                        contentId = split[0];
+                                    }
+                                    else
+                                    {
+                                        contentId = split[1];
+                                    }
                                 }
+                               
                                 String Region = "";
                                 //regionPrefix = @{@"PCSF":@"EU",@"PCSE":@"US",@"PCSG":@"JP",@"PCSH":@"HK",@"PCSD":@"CN",@"PCSB":@"AU"};
                                 if (contentId.StartsWith("PCSF"))
