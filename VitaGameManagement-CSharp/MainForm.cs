@@ -44,6 +44,7 @@ namespace VitaGameManagement_CSharp
             packages = VitaPackageHelper.Helper.loadPackages(libraryPath.Text);
             if (packages.Count > 0)
             {
+                GameListView.Items.Clear();
                 foreach (VitaPackageHelper.VitaPackage package in packages)
                 {
                     long size = new FileInfo(package.fileName).Length;
@@ -128,6 +129,22 @@ namespace VitaGameManagement_CSharp
                                 double progress = (double)queue.uploaded / (double)queue.total * 100;
                                 uploadProgress.Value = (int)progress;
                                 text = speed_text;
+                                if (queue.obj != null)
+                                {
+                                    ListViewItem item = queue.obj as ListViewItem;
+                                    if (item != null)
+                                    {
+                                        if(uploadProgress.Value == 100)
+                                        {
+                                            item.SubItems[5].Text = "Done";
+                                        }
+                                        else
+                                        {
+                                            item.SubItems[5].Text = uploadProgress.Value + "%";
+                                        }
+                                        
+                                    }
+                                }
                             }
                             ftpStatus.Text = String.Format("{0} Queue {1}", manager.getQueueCount(), text);
 

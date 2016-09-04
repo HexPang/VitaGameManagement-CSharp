@@ -1,10 +1,11 @@
-﻿#define TRACE
+﻿//#define TRACE
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.FtpClient;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -90,45 +91,52 @@ namespace VitaGameManagement_CSharp
                         FileInfo fileInf = new FileInfo(queue.file);
                         queue.total = fileInf.Length;
                         currentQueue = queue;
-                        string url = String.Format("ftp://{0}:{1}/ux0:/{2}", ip, port,fileInf.Name);
-                        FtpWebRequest ftp = (FtpWebRequest)WebRequest.Create(url);
-                        ftp.Credentials = new NetworkCredential("anonymous", "");
-                        ftp.KeepAlive = false;
-                        ftp.UsePassive = true;
-                        
-                        ftp.Method = WebRequestMethods.Ftp.UploadFile;
-                        ftp.UseBinary = true;
-                        // Notify the server about the size of the uploaded file 
-                        ftp.ContentLength = fileInf.Length;
+                        string file = String.Format("/ux0:/{0}",fileInf.Name);
+                        //string url = String.Format("ftp://127.0.0.1:21/{2}", ip, port, fileInf.Name);
 
-                        // The buffer size is set to 2kb 
-                        int buffLength = 2048;
-                        byte[] buff = new byte[buffLength];
-                        int contentLen;
 
-                        // Opens a file stream (System.IO.FileStream) to read the file to be uploaded 
-                        //FileStream fs = fileInf.OpenRead(); 
-                        FileStream fs = fileInf.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-
-                        // Stream to which the file to be upload is written 
-                       
-                        Stream strm = ftp.GetRequestStream();
-
-                        // Read from the file stream 2kb at a time 
-                        contentLen = fs.Read(buff, 0, buffLength);
-                        error = null;
-                        // Till Stream content ends 
-                        while (contentLen != 0)
+                        using (FtpClient conn = new FtpClient())
                         {
-                            // Write Content from the file stream to the FTP Upload Stream 
-                            queue.uploaded += contentLen;
-                            strm.Write(buff, 0, contentLen);
-                            contentLen = fs.Read(buff, 0, buffLength);
-                        }
+                            conn.Host = ip;
+                            conn.Port = int.Parse(port);
+                            conn.Credentials = new NetworkCredential("anonymous", "");
 
-                        // Close the file stream and the Request Stream 
-                        strm.Close();
-                        fs.Close();
+                            FileStream fs = fileInf.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                            using (Stream strm = conn.OpenWrite(file))
+                            {
+                                try
+                                {
+                                    int buffLength = 8192;
+                                    byte[] buff = new byte[buffLength];
+                                    int contentLen;
+
+                                    // Read from the file stream 2kb at a time 
+                                    contentLen = fs.Read(buff, 0, buffLength);
+                                    error = null;
+                                    // Till Stream content ends 
+                                    while (contentLen != 0)
+                                    {
+                                        // Write Content from the file stream to the FTP Upload Stream 
+                                        queue.uploaded += contentLen;
+                                        strm.Write(buff, 0, contentLen);
+                                        contentLen = fs.Read(buff, 0, buffLength);
+                                        Thread.Sleep(1);
+                                    }
+
+                                    // Close the file stream and the Request Stream 
+                                    strm.Close();
+                                    fs.Close();
+
+                                }
+                                finally
+                                {
+                                    strm.Close();
+                                    fs.Close();
+                                }
+                            }
+
+
+                        }
                         queueList.RemoveAt(0);
                     }
                     catch (WebException ex)
