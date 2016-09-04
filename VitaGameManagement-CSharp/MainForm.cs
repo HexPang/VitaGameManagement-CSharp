@@ -15,6 +15,8 @@ namespace VitaGameManagement_CSharp
 {
     public partial class MainForm : Form
     {
+		private delegate void LibraryAsyncEventHandler();
+
         private FTPManager manager;
         private List<VitaPackageHelper.VitaPackage> packages;
         public MainForm()
@@ -40,22 +42,36 @@ namespace VitaGameManagement_CSharp
             this.reloadSetting();
         }
 
-        private void initGameLibrary()
-        {
-            packages = VitaPackageHelper.Helper.loadPackages(libraryPath.Text);
-            if (packages.Count > 0)
-            {
-                GameListView.Items.Clear();
-                foreach (VitaPackageHelper.VitaPackage package in packages)
-                {
-                    long size = new FileInfo(package.fileName).Length;
-                    string fileSize = String.Format(new FileSizeFormatProvider(), "{0:fs}", size);
 
-                    ListViewItem item = new ListViewItem(new String[] { package.appId, package.sfoData["TITLE"], package.region, fileSize, package.fileName, "OK", package.sfoData["APP_VER"] });
-                    GameListView.Items.Add(item);
-                }
-            }
-        }
+		private void loadGameLibrary()
+		{
+			packages = VitaPackageHelper.Helper.loadPackages(libraryPath.Text);
+			if (packages.Count > 0)
+			{
+				GameListView.Items.Clear();
+				foreach (VitaPackageHelper.VitaPackage package in packages)
+				{
+					long size = new FileInfo(package.fileName).Length;
+					string fileSize = String.Format(new FileSizeFormatProvider(), "{0:fs}", size);
+
+					ListViewItem item = new ListViewItem(new String[] { package.appId, package.sfoData["TITLE"], package.region, fileSize, package.fileName, "OK", package.sfoData["APP_VER"] });
+					GameListView.Items.Add(item);
+				}
+			}
+		}
+
+		private void gameLibraryCallback(IAsyncResult result)
+		{
+			((LibraryAsyncEventHandler)result.AsyncState).EndInvoke(result);
+		}
+
+		private void initGameLibrary()
+		{
+			LibraryAsyncEventHandler libraryAsync = new LibraryAsyncEventHandler(this.loadGameLibrary);
+			libraryAsync.BeginInvoke(new AsyncCallback(this.gameLibraryCallback), libraryAsync);
+
+		}
+
         private void reloadSetting()
         {
             libraryPath.Text = ConfigurationManager.ReadSetting("library");
