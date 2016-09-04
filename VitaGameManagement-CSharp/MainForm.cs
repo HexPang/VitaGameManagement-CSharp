@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.FtpClient;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -57,6 +58,10 @@ namespace VitaGameManagement_CSharp
         }
         private void reloadSetting()
         {
+            libraryPath.Text = ConfigurationManager.ReadSetting("library");
+            vita_ip.Text = ConfigurationManager.ReadSetting("vita_ip");
+            vita_port.Text = ConfigurationManager.ReadSetting("vita_port");
+
             if (vita_ip.Text != "" && vita_port.Text != "")
             {
                 manager = FTPManager.instance(vita_ip.Text, vita_port.Text);
@@ -70,9 +75,6 @@ namespace VitaGameManagement_CSharp
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
-            libraryPath.Text = ConfigurationManager.ReadSetting("library");
-            vita_ip.Text = ConfigurationManager.ReadSetting("vita_ip");
-            vita_port.Text = ConfigurationManager.ReadSetting("vita_port");
             this.reloadSetting();
             if (libraryPath.Text != "")
             {
@@ -158,6 +160,56 @@ namespace VitaGameManagement_CSharp
                 }else
                 {
                     ftpStatus.Text = "Stop";
+                }
+            }
+        }
+
+        private void folderTree_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            //Connect to FTP Server
+            if (manager != null)
+            {
+                string path = "/";
+                if (e.Node.Text.StartsWith("/"))
+                {
+                    path = e.Node.Text;
+                    e.Node.Nodes.Clear();
+                }else
+                {
+                    folderTree.Nodes.RemoveByKey("folder");
+                }
+                IEnumerable<string> folders = manager.listFolder(path);
+                
+                foreach (string folder in folders)
+                {
+                    if(path == "/")
+                    {
+                        folderTree.Nodes.Add("folder", folder);
+                    }else
+                    {
+                        e.Node.Nodes.Add("folder", folder);
+                    }
+                    
+                }
+            }
+        }
+
+        private void folderTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if(manager != null)
+            {
+                if(e.Node.Text.StartsWith("/"))
+                {
+                    IEnumerable<FtpListItem> files = manager.listFile(e.Node.Text);
+                    fileListView.Items.Clear();
+                    foreach(FtpListItem file in files)
+                    {
+                        ListViewItem item = new ListViewItem();
+                        item.Text = file.Name;
+                        item.ToolTipText = String.Format(new FileSizeFormatProvider(),"{0:fs}", file.Size);
+                        item.ImageIndex = 0;
+                        fileListView.Items.Add(item);
+                    }
                 }
             }
         }
