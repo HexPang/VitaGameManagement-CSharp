@@ -47,12 +47,66 @@ namespace VitaGameManagement_CSharp
             this.port = port;
         }
 
+        public IEnumerable<FtpListItem> listFile(string path = null)
+        {
+            try
+            {
+                using (FtpClient conn = new FtpClient())
+                {
+                    conn.Host = ip;
+                    conn.Port = int.Parse(port);
+                    conn.Credentials = new NetworkCredential("anonymous", "");
+                    if (path == null)
+                    {
+                        path = "/";
+                    }
+                    FtpListItem[] list = conn.GetListing(path);
+                    IEnumerable<FtpListItem> folders = from item in list where item.Type == FtpFileSystemObjectType.File select item;
+
+                    conn.Disconnect();
+                    return folders;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public IEnumerable<string> listFolder(string path = null)
+        {
+            try
+            {
+                using (FtpClient conn = new FtpClient())
+                {
+                    conn.Host = ip;
+                    conn.Port = int.Parse(port);
+                    conn.Credentials = new NetworkCredential("anonymous", "");
+                    if (path == null)
+                    {
+                        path = "/";
+                    }
+                    FtpListItem[] list = conn.GetListing(path);
+                    IEnumerable<string> folders = from item in list where item.Type == FtpFileSystemObjectType.Directory select item.FullName;
+                    conn.Disconnect();
+                    return folders;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static FTPManager instance(string ip,string port)
         {
             if(_instance == null)
             {
                 _instance = new FTPManager(ip,port);
             }
+            _instance.ip = ip;
+            _instance.port = port;
+
             return _instance;
         }
 
@@ -133,6 +187,7 @@ namespace VitaGameManagement_CSharp
                                     strm.Close();
                                     fs.Close();
                                 }
+                                conn.Disconnect();
                             }
 
 
