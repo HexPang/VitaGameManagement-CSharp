@@ -12,5 +12,6 @@ namespace VitaPackageHelper
         public string appId;
         public string region;
         public Dictionary<String, String> sfoData;
+        public Byte[] icon;
     }
 }

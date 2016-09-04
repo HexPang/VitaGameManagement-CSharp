@@ -15,10 +15,12 @@ namespace VitaGameManagement_CSharp
 {
     public partial class MainForm : Form
     {
-		private delegate void LibraryAsyncEventHandler();
+        private delegate void LibraryAsyncEventHandler();
+        private delegate void drawGameListDelegate();
 
         private FTPManager manager;
         private List<VitaPackageHelper.VitaPackage> packages;
+        private bool libraryLoading = false;
         public MainForm()
         {
             InitializeComponent();
@@ -43,33 +45,52 @@ namespace VitaGameManagement_CSharp
         }
 
 
-		private void loadGameLibrary()
-		{
-			packages = VitaPackageHelper.Helper.loadPackages(libraryPath.Text);
-			if (packages.Count > 0)
-			{
-				GameListView.Items.Clear();
-				foreach (VitaPackageHelper.VitaPackage package in packages)
-				{
-					long size = new FileInfo(package.fileName).Length;
-					string fileSize = String.Format(new FileSizeFormatProvider(), "{0:fs}", size);
+        private void loadGameLibrary()
+        {
+            packages = VitaPackageHelper.Helper.loadPackages(libraryPath.Text);
+        }
 
-					ListViewItem item = new ListViewItem(new String[] { package.appId, package.sfoData["TITLE"], package.region, fileSize, package.fileName, "OK", package.sfoData["APP_VER"] });
-					GameListView.Items.Add(item);
-				}
-			}
-		}
+        private void addGamesToListView()
+        {
+            if (packages.Count > 0)
+            {
+                GameListView.Items.Clear();
+                iconImageList.Images.Clear();
+                foreach (VitaPackageHelper.VitaPackage package in packages)
+                {
+                    long size = new FileInfo(package.fileName).Length;
+                    string fileSize = String.Format(new FileSizeFormatProvider(), "{0:fs}", size);
+
+                    ListViewItem item = new ListViewItem(new String[] { package.appId, package.sfoData["TITLE"], package.region, fileSize, package.fileName, "OK", package.sfoData["APP_VER"] });
+                    Image image = VitaPackageHelper.Helper.BytesToImage(package.icon);
+                    if(image != null)
+                    {
+                        iconImageList.Images.Add(image);
+                        item.ImageIndex = iconImageList.Images.Count - 1;
+                    }
+                    GameListView.Items.Add(item);
+                }
+            }
+            libraryLoading = false;
+            tabPage1.Text = "Games";
+            tabControl1.Enabled = true;
+        }
+
 
 		private void gameLibraryCallback(IAsyncResult result)
 		{
 			((LibraryAsyncEventHandler)result.AsyncState).EndInvoke(result);
-		}
+            drawGameListDelegate dgld = new drawGameListDelegate(this.addGamesToListView);
+            this.BeginInvoke(dgld);
+        }
 
 		private void initGameLibrary()
 		{
-			LibraryAsyncEventHandler libraryAsync = new LibraryAsyncEventHandler(this.loadGameLibrary);
+            tabPage1.Text = "Loading...";
+            tabControl1.Enabled = false;
+            libraryLoading = true;
+            LibraryAsyncEventHandler libraryAsync = new LibraryAsyncEventHandler(this.loadGameLibrary);
 			libraryAsync.BeginInvoke(new AsyncCallback(this.gameLibraryCallback), libraryAsync);
-
 		}
 
         private void reloadSetting()

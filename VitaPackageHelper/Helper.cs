@@ -1,16 +1,66 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 
 namespace VitaPackageHelper
 {
     public static class Helper
     {
+        /// <summary>
+        /// Convert Byte[] to Image
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public static Image BytesToImage(byte[] buffer)
+        {
+            MemoryStream ms = new MemoryStream(buffer);
+            Image image = System.Drawing.Image.FromStream(ms);
+            return image;
+        }
+
+        public static Byte[] loadIconFromPackage(String fileName)
+        {
+            Byte[] image = null;
+            try
+            {
+                using (FileStream zipToOpen = new FileStream(fileName, FileMode.Open))
+                {
+                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+                    {
+                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        {
+                            if (entry.FullName.Equals("sce_sys/icon0.png"))
+                            {
+                                using (BinaryReader reader = new BinaryReader(entry.Open()))
+                                {
+                                    MemoryStream ms = new MemoryStream();
+                                    Byte[] buffer = reader.ReadBytes(2048);
+                                    while(buffer.Length > 0)
+                                    {
+                                        ms.Write(buffer, 0, buffer.Length);
+                                        buffer = reader.ReadBytes(2048);
+                                    }
+                                    image = ms.ToArray();
+                                    ms.Close();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            GC.Collect();
+            return image;
+        }
+
+
+
         public static List<VitaPackage> loadPackages(String path)
         {
             List<VitaPackage> packages = new List<VitaPackage>();
@@ -79,7 +129,7 @@ namespace VitaPackageHelper
                                 }
 
 
-                                VitaPackage package = new VitaPackage() { fileName = info.FullName, appId = contentId, sfoData = sfo, region = Region };
+                                VitaPackage package = new VitaPackage() { fileName = info.FullName, appId = contentId, sfoData = sfo, region = Region,icon = loadIconFromPackage(info.FullName) };
                                 packages.Add(package);
                             }
                         }
@@ -144,6 +194,7 @@ namespace VitaPackageHelper
                                         }
                                     }
                                 }
+                                break;
                             }
                         }
                     }
