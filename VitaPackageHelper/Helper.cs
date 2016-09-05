@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace VitaPackageHelper
 {
@@ -20,44 +22,33 @@ namespace VitaPackageHelper
             Image image = System.Drawing.Image.FromStream(ms);
             return image;
         }
-
-        public static Byte[] loadIconFromPackage(String fileName)
+        private static void ResizeImageAndSave(MemoryStream ms,string id)
         {
-            Byte[] image = null;
-            try
+            if (!Directory.Exists("icons"))
             {
-                using (FileStream zipToOpen = new FileStream(fileName, FileMode.Open))
-                {
-                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-                    {
-                        foreach (ZipArchiveEntry entry in archive.Entries)
-                        {
-                            if (entry.Name.Equals("icon0.png"))
-                            {
-                                using (BinaryReader reader = new BinaryReader(entry.Open()))
-                                {
-                                    MemoryStream ms = new MemoryStream();
-                                    Byte[] buffer = reader.ReadBytes(2048);
-                                    while(buffer.Length > 0)
-                                    {
-                                        ms.Write(buffer, 0, buffer.Length);
-                                        buffer = reader.ReadBytes(2048);
-                                    }
-                                    image = ms.ToArray();
-                                    ms.Close();
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+                Directory.CreateDirectory("icons");
             }
-            catch (Exception ex)
+            if (File.Exists("icons//" + id + ".jpg"))
             {
-                throw ex;
+                ms.Close();
+                return;
             }
-            GC.Collect();
-            return image;
+            Image img = Image.FromStream(ms);
+            Bitmap bmp = new Bitmap(48, 48);
+            Graphics g = Graphics.FromImage(bmp);
+            g.Clear(Color.Transparent);
+            g.CompositingQuality = CompositingQuality.HighQuality;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.DrawImage(img, new Rectangle(0, 0, 48, 48), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
+            g.Dispose();
+
+            img.Dispose();
+            ms.Close();
+
+            img = bmp;
+          
+            img.Save("icons/" + id + ".jpg");
         }
 
         public static List<VitaPackage> loadPackages(String path)
@@ -78,7 +69,7 @@ namespace VitaPackageHelper
                             if(sfo.Count > 0)
                             {
                                 String contentId = sfo["CONTENT_ID"];
-                                if(contentId == "")
+                                if(contentId.IndexOf("-") == -1)
                                 {
                                     contentId = sfo["TITLE"];
                                 }
@@ -126,9 +117,8 @@ namespace VitaPackageHelper
                                 {
                                     Region = contentId.Substring(0, 4);
                                 }
-
-
-                                VitaPackage package = new VitaPackage() { fileName = info.FullName, appId = contentId, sfoData = sfo, region = Region,icon = loadIconFromPackage(info.FullName) };
+                                //loadIconFromPackage(info.FullName)
+                                VitaPackage package = new VitaPackage() { fileName = info.FullName, appId = contentId, sfoData = sfo, region = Region,icon = null };
                                 packages.Add(package);
                             }
                         }
@@ -213,65 +203,85 @@ namespace VitaPackageHelper
             {
 				using (FileStream zipToOpen = new FileStream(file, FileMode.Open))
                 {
-					using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+					using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read))
                     {
-                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        ZipArchiveEntry entry = archive.GetEntry("sce_sys/param.sfo");
+                        using (StreamReader sr = new StreamReader(entry.Open()))
+                          
                         {
-                            if (entry.Name.Equals("param.sfo"))
+                            BinaryReader reader = new BinaryReader(sr.BaseStream);
+                            Int32 header = reader.ReadInt32();
+                            if (header == 0x46535000)
                             {
-                                using (BinaryReader reader = new BinaryReader(entry.Open()))
-                                {
-                                    Int32 header = reader.ReadInt32();
-                                    if (header == 0x46535000)
-                                    {
-                                        Byte[] version = reader.ReadBytes(4);
-                                        Int32 key_table_start = reader.ReadInt32();
-                                        Int32 data_table_start = reader.ReadInt32();
-                                        Int32 tables_entries = reader.ReadInt32();
-                                        long streamPosition = reader.BaseStream.Position;
-                                        for (int i = 0; i < tables_entries; i++)
-                                        {
-                                            Int16 key_offset = reader.ReadInt16();
-                                            Int16 data_format = reader.ReadInt16();
-                                            Int32 data_lenght = reader.ReadInt32();
-                                            Int32 data_max_lenght = reader.ReadInt32();
-                                            Int32 data_offset = reader.ReadInt32();
-                                            streamPosition = reader.BaseStream.Position;
+                                Byte[] version = reader.ReadBytes(4);
+                                Int32 key_table_start = reader.ReadInt32();
+                                Int32 data_table_start = reader.ReadInt32();
+                                Int32 tables_entries = reader.ReadInt32();
+                                List<SFOFFSET> offsetTable = new List<SFOFFSET>();
 
-                                            reader.BaseStream.Position = key_offset + key_table_start;
-                                            String key = "";
-                                            int keyByte = reader.ReadByte();
-                                            while (keyByte != 0)
-                                            {
-                                                key += ((char)keyByte).ToString();
-                                                keyByte = reader.ReadByte();
-                                            }
-                                            reader.BaseStream.Position = data_offset + data_table_start;
-                                            Byte[] buff;
-                                            buff = reader.ReadBytes(data_lenght - 1);
-                                            String data = System.Text.Encoding.UTF8.GetString(buff);
-                                            reader.BaseStream.Position = streamPosition;
-                                            sfo[key] = data;
-                                        }
-                                    }
+                                for (int i = 0; i < tables_entries; i++)
+                                {
+                                    Int16 key_offset = reader.ReadInt16();
+                                    Int16 data_format = reader.ReadInt16();
+                                    Int32 data_lenght = reader.ReadInt32();
+                                    Int32 data_max_lenght = reader.ReadInt32();
+                                    Int32 data_offset = reader.ReadInt32();
+                                    offsetTable.Add(new SFOFFSET() { key_offset = key_offset, data_format = data_format, data_lenght = data_lenght, data_max_lenght = data_max_lenght, data_offset = data_offset });
                                 }
-                                break;
+                                List<string> keyTable = new List<string>();
+                                for (int i = 0;i< tables_entries;i++)
+                                {
+                                    //Key Here
+                                    String key = "";
+                                    int keyByte = reader.ReadByte();
+                                    while (keyByte != 0)
+                                    {
+                                        key += ((char)keyByte).ToString();
+                                        keyByte = reader.ReadByte();
+                                    }
+                                    keyTable.Add(key);
+                                }
+                                for (int i = 0; i < tables_entries; i++)
+                                {
+                                    //Key Here
+                                    SFOFFSET offset = offsetTable[i];
+                                    Byte[] buff;
+                                    buff = reader.ReadBytes(offset.data_max_lenght );
+                                    string data = System.Text.Encoding.UTF8.GetString(buff,0,offset.data_max_lenght).Replace("\0",string.Empty);
+                                    sfo.Add(keyTable[i], data);
+                                }
+
                             }
                         }
+                        String iconName = sfo["CONTENT_ID"].Length > 0 ? sfo["CONTENT_ID"] : sfo["TITLE"];
+                        
+                        if (!File.Exists(String.Format("icons/{0}.jpg",iconName)))
+                        {
+                            entry = archive.GetEntry("sce_sys/icon0.png");
+
+                            using (BinaryReader reader = new BinaryReader(entry.Open()))
+                            {
+
+                                Byte[] buffer = reader.ReadBytes(2048);
+                                MemoryStream ms = new MemoryStream();
+                                while (buffer.Length > 0)
+                                {
+                                    ms.Write(buffer, 0, buffer.Length);
+                                    buffer = reader.ReadBytes(2048);
+                                }
+                                ResizeImageAndSave(ms, sfo["CONTENT_ID"].Length > 0 ? sfo["CONTENT_ID"] : sfo["TITLE"]);
+                            }
+                        }
+                       
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 
             }
             
             return sfo;
-        }
-
-        public static PATCH_RESULT patchPackage(string file, string patchFile, Func<object> p)
-        {
-            throw new NotImplementedException();
         }
     }
 }

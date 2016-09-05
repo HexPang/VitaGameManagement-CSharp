@@ -14,4 +14,12 @@ namespace VitaPackageHelper
         public Dictionary<String, String> sfoData;
         public Byte[] icon;
     }
+    public class SFOFFSET
+    {
+        public Int16 key_offset;
+        public Int16 data_format;
+        public Int32 data_lenght;
+        public Int32 data_max_lenght;
+        public Int32 data_offset;
+    }
 }
