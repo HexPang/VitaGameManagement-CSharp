@@ -149,7 +149,7 @@ namespace VitaPackageHelper
 			Dictionary<string, string> patchSFO = loadSFO(patchFile);
 			if (sourceSFO["CONTENT_ID"] != patchSFO["CONTENT_ID"])
 			{
-				//return false;
+				return false;
 			}
 
 			string temp = sourceFile.Substring(0,sourceFile.LastIndexOf('\\')) + "\\temp\\";
@@ -163,7 +163,19 @@ namespace VitaPackageHelper
 				}
 			}
 
-			return false;
+			using (FileStream zipToOpen = new FileStream(patchFile, FileMode.Open))
+			{
+				using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+				{
+					archive.ExtractToDirectory(temp);
+				}
+			}
+
+			File.Delete(sourceFile);
+
+			ZipFile.CreateFromDirectory(temp, sourceFile);
+
+			return true;
 		}
 
         public static Dictionary<string, string> loadSFO(String file)
