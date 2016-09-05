@@ -161,7 +161,7 @@ namespace VitaPackageHelper
 
 			ZipFile.CreateFromDirectory(temp, sourceFile);
 
-
+			Directory.Delete(temp);
 
 			return true;
 		}
