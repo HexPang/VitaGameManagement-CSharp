@@ -154,26 +154,14 @@ namespace VitaPackageHelper
 
 			string temp = sourceFile.Substring(0,sourceFile.LastIndexOf('\\')) + "\\temp\\";
 
-
-			using (FileStream zipToOpen = new FileStream(sourceFile, FileMode.Open))
-			{
-				using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-				{
-					archive.ExtractToDirectory(temp);
-				}
-			}
-
-			using (FileStream zipToOpen = new FileStream(patchFile, FileMode.Open))
-			{
-				using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-				{
-					archive.ExtractToDirectory(temp);
-				}
-			}
+			ZipFile.ExtractToDirectory(sourceFile, temp);
+			ZipFile.ExtractToDirectory(patchFile, temp);
 
 			File.Delete(sourceFile);
 
 			ZipFile.CreateFromDirectory(temp, sourceFile);
+
+
 
 			return true;
 		}
