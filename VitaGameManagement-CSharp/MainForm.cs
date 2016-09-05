@@ -17,6 +17,10 @@ namespace VitaGameManagement_CSharp
     {
         private delegate void LibraryAsyncEventHandler();
         private delegate void drawGameListDelegate();
+        private delegate void PatchingDelegate(string file, string patchFile, ListViewItem listViewItem);
+        private delegate void PatchingMessage(string message);
+        private delegate void UpdatePatchingMessageDelegate(ListViewItem item, string message);
+        private delegate void LoadLibraryDelegate();
 
         private FTPManager manager;
         private List<VitaPackageHelper.VitaPackage> packages;
@@ -75,7 +79,6 @@ namespace VitaGameManagement_CSharp
             tabPage1.Text = "Games";
             tabControl1.Enabled = true;
         }
-
 
 		private void gameLibraryCallback(IAsyncResult result)
 		{
@@ -249,6 +252,67 @@ namespace VitaGameManagement_CSharp
                     }
                 }
             }
+        }
+
+
+        private void UpdatePatchingMessage(ListViewItem item,string message)
+        {
+            item.SubItems[5].Text = message;
+        }
+
+        private void PatchGameAsync(string file,string patchFile,ListViewItem item)
+        {
+            PatchingMessage pm = msg => {
+                UpdatePatchingMessageDelegate upmd = new UpdatePatchingMessageDelegate(UpdatePatchingMessage);
+                this.BeginInvoke(upmd, item, msg.ToString());
+            };
+            VitaPackageHelper.Helper.PATCH_RESULT succ = VitaPackageHelper.Helper.patchPackage(file, patchFile,pm);
+            if (succ == VitaPackageHelper.Helper.PATCH_RESULT.SUCCESS)
+            {
+                LoadLibraryDelegate lld = new LoadLibraryDelegate(initGameLibrary);
+                this.BeginInvoke(lld);
+                MessageBox.Show("Patching Successful.");
+            }
+            else if (succ == VitaPackageHelper.Helper.PATCH_RESULT.SFO_NOT_MATCH)
+            {
+                MessageBox.Show("Can not Patch this game,CONTENT_ID not match.Please check CONTENT_ID in param.sfo.");
+            }
+            else if (succ == VitaPackageHelper.Helper.PATCH_RESULT.VERSION_SAME)
+            {
+                MessageBox.Show("Can not Patch this game.APP_VER same.might be already patched?");
+            }
+        }
+        const long PATCHING_TAG = 0x160109;
+        private void patchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+            if (GameListView.SelectedItems.Count == 1)
+            {
+                ListViewItem item = GameListView.SelectedItems[0];
+                String file = item.SubItems[4].Text;
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "*.zip|*.zip|*.vpk|*.vpk";
+                if(ofd.ShowDialog() == DialogResult.OK)
+                {
+                    DialogResult result = MessageBox.Show("Do you want create a back before patch?", "Patching", MessageBoxButtons.YesNoCancel);
+                    if(result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    if (result == DialogResult.Yes)
+                    {
+                        File.Copy(file, file + ".bak", true);
+                    }
+                    String patchFile = ofd.FileName;
+                    PatchingDelegate pd = new PatchingDelegate(this.PatchGameAsync);
+                    pd.BeginInvoke(file, patchFile,item, null, null);
+                }
+            }
+        }
+
+        private void toolStripStatusLabel2_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }
