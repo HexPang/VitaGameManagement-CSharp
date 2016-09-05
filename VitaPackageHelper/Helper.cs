@@ -15,6 +15,7 @@ namespace VitaPackageHelper
         /// <returns></returns>
         public static Image BytesToImage(byte[] buffer)
         {
+            if(buffer == null) { return null; }
             MemoryStream ms = new MemoryStream(buffer);
             Image image = System.Drawing.Image.FromStream(ms);
             return image;
@@ -31,7 +32,7 @@ namespace VitaPackageHelper
                     {
                         foreach (ZipArchiveEntry entry in archive.Entries)
                         {
-                            if (entry.FullName.Equals("sce_sys/icon0.png"))
+                            if (entry.Name.Equals("icon0.png"))
                             {
                                 using (BinaryReader reader = new BinaryReader(entry.Open()))
                                 {
@@ -142,28 +143,66 @@ namespace VitaPackageHelper
             return packages;
         }
 
+        public enum PATCH_RESULT
+        {
+            SUCCESS,
+            SFO_NOT_MATCH,
+            VERSION_SAME
+        }
 
-		public static bool patchPackage(String sourceFile, String patchFile)
+		public static PATCH_RESULT patchPackage(String sourceFile, String patchFile,Delegate callback = null)
 		{
 			Dictionary<string, string> sourceSFO = loadSFO(sourceFile);
 			Dictionary<string, string> patchSFO = loadSFO(patchFile);
-			if (sourceSFO["CONTENT_ID"] != patchSFO["CONTENT_ID"])
-			{
-				return false;
-			}
+            if(sourceSFO.Count > 0 && patchSFO.Count > 0)
+            {
+                if (sourceSFO["CONTENT_ID"] != patchSFO["CONTENT_ID"])
+                {
+                    return PATCH_RESULT.SFO_NOT_MATCH;
+                }
+                if (sourceSFO["APP_VER"] == patchSFO["APP_VER"])
+                {
+                    return PATCH_RESULT.VERSION_SAME;
+                }
+            }
+	
+            callback?.DynamicInvoke("Cleaning...");
 
-			string temp = sourceFile.Substring(0,sourceFile.LastIndexOf('\\')) + "\\temp\\";
+            string temp = sourceFile.Substring(0,sourceFile.LastIndexOf('\\')) + "\\temp\\";
+            if(Directory.Exists(temp))
+                Directory.Delete(temp,true);
+            callback?.DynamicInvoke("Extracting...");
+            ZipFile.ExtractToDirectory(sourceFile, temp);
+            using (FileStream zipToOpen = new FileStream(patchFile, FileMode.Open))
+            {
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+                {
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+                     if(entry.Name != "")
+                        {
+                            //Skip Directory
+                            callback?.DynamicInvoke("Patching " + entry.Name);
+                            entry.ExtractToFile(temp + entry.FullName, true);
+                        }else
+                        {
+                            if(!Directory.Exists(temp + entry.FullName))
+                            {
+                                Directory.CreateDirectory(temp + entry.FullName);
+                            }
+                        }
+                    }
+                }
+            }
+            callback?.DynamicInvoke("Cleaning...");
+            File.Delete(sourceFile);
+            callback?.DynamicInvoke("Rebuilding...");
 
-			ZipFile.ExtractToDirectory(sourceFile, temp);
-			ZipFile.ExtractToDirectory(patchFile, temp);
-
-			File.Delete(sourceFile);
-
-			ZipFile.CreateFromDirectory(temp, sourceFile);
-
-			Directory.Delete(temp);
-
-			return true;
+            ZipFile.CreateFromDirectory(temp, sourceFile);
+            callback?.DynamicInvoke("Cleaning...");
+            Directory.Delete(temp,true);
+            callback?.DynamicInvoke("Done.");
+            return PATCH_RESULT.SUCCESS;
 		}
 
         public static Dictionary<string, string> loadSFO(String file)
@@ -178,7 +217,7 @@ namespace VitaPackageHelper
                     {
                         foreach (ZipArchiveEntry entry in archive.Entries)
                         {
-                            if (entry.FullName.Equals("sce_sys/param.sfo"))
+                            if (entry.Name.Equals("param.sfo"))
                             {
                                 using (BinaryReader reader = new BinaryReader(entry.Open()))
                                 {
@@ -228,6 +267,11 @@ namespace VitaPackageHelper
             }
             
             return sfo;
+        }
+
+        public static PATCH_RESULT patchPackage(string file, string patchFile, Func<object> p)
+        {
+            throw new NotImplementedException();
         }
     }
 }

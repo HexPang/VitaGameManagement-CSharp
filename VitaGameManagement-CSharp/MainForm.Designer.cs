@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Double click to Connect");
+            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Double click to Connect");
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.vita_ip = new System.Windows.Forms.TextBox();
@@ -39,7 +39,6 @@
             this.libraryPath = new System.Windows.Forms.TextBox();
             this.chooseGameFolder = new System.Windows.Forms.Button();
             this.vita_port = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.GameListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -51,6 +50,7 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.uploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.iconImageList = new System.Windows.Forms.ImageList(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.fileListView = new System.Windows.Forms.ListView();
@@ -62,7 +62,10 @@
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.uploadProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.iconImageList = new System.Windows.Forms.ImageList(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.patchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label3 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.tabPage2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -91,7 +94,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.07692F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.92308F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 73F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75F));
             this.tableLayoutPanel1.Controls.Add(this.vita_ip, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
@@ -102,31 +105,31 @@
             this.tableLayoutPanel1.Location = new System.Drawing.Point(6, 6);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 6;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.692307F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 333F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(663, 429);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 45F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(766, 455);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // vita_ip
             // 
             this.vita_ip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.vita_ip.Location = new System.Drawing.Point(139, 41);
+            this.vita_ip.Location = new System.Drawing.Point(162, 30);
             this.vita_ip.Name = "vita_ip";
-            this.vita_ip.Size = new System.Drawing.Size(447, 21);
+            this.vita_ip.Size = new System.Drawing.Size(525, 21);
             this.vita_ip.TabIndex = 6;
             // 
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.Location = new System.Drawing.Point(3, 38);
+            this.label2.Location = new System.Drawing.Point(3, 27);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(130, 26);
+            this.label2.Size = new System.Drawing.Size(153, 26);
             this.label2.TabIndex = 4;
             this.label2.Text = "PSVita IP && Port";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -137,7 +140,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(130, 24);
+            this.label1.Size = new System.Drawing.Size(153, 24);
             this.label1.TabIndex = 0;
             this.label1.Text = "Game Folder";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -146,18 +149,18 @@
             // 
             this.libraryPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.libraryPath.Location = new System.Drawing.Point(139, 3);
+            this.libraryPath.Location = new System.Drawing.Point(162, 3);
             this.libraryPath.Name = "libraryPath";
-            this.libraryPath.Size = new System.Drawing.Size(447, 21);
+            this.libraryPath.Size = new System.Drawing.Size(525, 21);
             this.libraryPath.TabIndex = 1;
             // 
             // chooseGameFolder
             // 
             this.chooseGameFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.chooseGameFolder.Location = new System.Drawing.Point(592, 3);
+            this.chooseGameFolder.Location = new System.Drawing.Point(693, 3);
             this.chooseGameFolder.Name = "chooseGameFolder";
-            this.chooseGameFolder.Size = new System.Drawing.Size(68, 21);
+            this.chooseGameFolder.Size = new System.Drawing.Size(70, 21);
             this.chooseGameFolder.TabIndex = 2;
             this.chooseGameFolder.Text = "Choose";
             this.chooseGameFolder.UseVisualStyleBackColor = true;
@@ -167,21 +170,11 @@
             // 
             this.vita_port.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.vita_port.Location = new System.Drawing.Point(592, 41);
+            this.vita_port.Location = new System.Drawing.Point(693, 30);
             this.vita_port.MaxLength = 5;
             this.vita_port.Name = "vita_port";
-            this.vita_port.Size = new System.Drawing.Size(68, 21);
+            this.vita_port.Size = new System.Drawing.Size(70, 21);
             this.vita_port.TabIndex = 7;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(592, 401);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(62, 25);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Apply";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // tabPage1
             // 
@@ -222,7 +215,7 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "ID";
-            this.columnHeader1.Width = 210;
+            this.columnHeader1.Width = 150;
             // 
             // columnHeader2
             // 
@@ -252,9 +245,11 @@
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.uploadToolStripMenuItem});
+            this.uploadToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.patchToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(120, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(120, 54);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // uploadToolStripMenuItem
@@ -263,6 +258,12 @@
             this.uploadToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.uploadToolStripMenuItem.Text = "Upload";
             this.uploadToolStripMenuItem.Click += new System.EventHandler(this.uploadToolStripMenuItem_Click);
+            // 
+            // iconImageList
+            // 
+            this.iconImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            this.iconImageList.ImageSize = new System.Drawing.Size(48, 48);
+            this.iconImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // tabControl1
             // 
@@ -280,6 +281,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.label3);
             this.tabPage3.Controls.Add(this.fileListView);
             this.tabPage3.Controls.Add(this.folderTree);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -296,7 +298,7 @@
             this.fileListView.LargeImageList = this.imageList1;
             this.fileListView.Location = new System.Drawing.Point(182, 3);
             this.fileListView.Name = "fileListView";
-            this.fileListView.Size = new System.Drawing.Size(490, 196);
+            this.fileListView.Size = new System.Drawing.Size(593, 196);
             this.fileListView.SmallImageList = this.imageList1;
             this.fileListView.StateImageList = this.imageList1;
             this.fileListView.TabIndex = 1;
@@ -315,10 +317,10 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.folderTree.Location = new System.Drawing.Point(3, 3);
             this.folderTree.Name = "folderTree";
-            treeNode1.Name = "节点0";
-            treeNode1.Text = "Double click to Connect";
+            treeNode25.Name = "节点0";
+            treeNode25.Text = "Double click to Connect";
             this.folderTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
+            treeNode25});
             this.folderTree.Size = new System.Drawing.Size(173, 435);
             this.folderTree.TabIndex = 0;
             this.folderTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.folderTree_NodeMouseClick);
@@ -353,9 +355,10 @@
             // 
             this.toolStripStatusLabel2.ForeColor = System.Drawing.SystemColors.MenuHighlight;
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(539, 17);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(508, 17);
             this.toolStripStatusLabel2.Spring = true;
             this.toolStripStatusLabel2.Text = "https://github.com/HexPang/VitaGameManagement-CSharp";
+            this.toolStripStatusLabel2.Click += new System.EventHandler(this.toolStripStatusLabel2_Click);
             // 
             // uploadProgress
             // 
@@ -368,11 +371,40 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // iconImageList
+            // toolStripMenuItem1
             // 
-            this.iconImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.iconImageList.ImageSize = new System.Drawing.Size(48, 48);
-            this.iconImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            // 
+            // patchToolStripMenuItem
+            // 
+            this.patchToolStripMenuItem.Name = "patchToolStripMenuItem";
+            this.patchToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.patchToolStripMenuItem.Text = "Patch";
+            this.patchToolStripMenuItem.Click += new System.EventHandler(this.patchToolStripMenuItem_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.ForeColor = System.Drawing.Color.Red;
+            this.label3.Location = new System.Drawing.Point(180, 202);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(587, 12);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Why i created this ?? i don\'t know...maybe you can tell me at twitter https://twi" +
+    "tter.com/hexpang";
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(693, 57);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(70, 25);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "Apply";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // MainForm
             // 
@@ -382,7 +414,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Name = "MainForm";
-            this.Text = "Vita Game Manager v0.1.2 WIP";
+            this.Text = "Vita Game Manager v0.1.3";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Validating += new System.ComponentModel.CancelEventHandler(this.MainForm_Validating);
             this.tabPage2.ResumeLayout(false);
@@ -392,6 +424,7 @@
             this.contextMenuStrip1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -408,7 +441,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox libraryPath;
         private System.Windows.Forms.Button chooseGameFolder;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox vita_port;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.ListView GameListView;
@@ -433,6 +465,10 @@
         private System.Windows.Forms.ListView fileListView;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ImageList iconImageList;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem patchToolStripMenuItem;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button button1;
     }
 }
 
