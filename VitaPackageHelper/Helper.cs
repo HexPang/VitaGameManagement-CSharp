@@ -59,8 +59,6 @@ namespace VitaPackageHelper
             return image;
         }
 
-
-
         public static List<VitaPackage> loadPackages(String path)
         {
             List<VitaPackage> packages = new List<VitaPackage>();
@@ -144,15 +142,39 @@ namespace VitaPackageHelper
             return packages;
         }
 
+
+		public static bool patchPackage(String sourceFile, String patchFile)
+		{
+			Dictionary<string, string> sourceSFO = loadSFO(sourceFile);
+			Dictionary<string, string> patchSFO = loadSFO(patchFile);
+			if (sourceSFO["CONTENT_ID"] != patchSFO["CONTENT_ID"])
+			{
+				//return false;
+			}
+
+			string temp = sourceFile.Substring(0,sourceFile.LastIndexOf('\\')) + "\\temp\\";
+
+
+			using (FileStream zipToOpen = new FileStream(sourceFile, FileMode.Open))
+			{
+				using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+				{
+					archive.ExtractToDirectory(temp);
+				}
+			}
+
+			return false;
+		}
+
         public static Dictionary<string, string> loadSFO(String file)
         {
 
             Dictionary<String, String> sfo = new Dictionary<string, string>();
             try
             {
-                using (FileStream zipToOpen = new FileStream(file, FileMode.Open))
+				using (FileStream zipToOpen = new FileStream(file, FileMode.Open))
                 {
-                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+					using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
                     {
                         foreach (ZipArchiveEntry entry in archive.Entries)
                         {
