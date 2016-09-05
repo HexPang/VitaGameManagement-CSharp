@@ -66,7 +66,10 @@ namespace VitaGameManagement_CSharp
                     string fileSize = String.Format(new FileSizeFormatProvider(), "{0:fs}", size);
 
                     ListViewItem item = new ListViewItem(new String[] { package.appId, package.sfoData["TITLE"], package.region, fileSize, package.fileName, "OK", package.sfoData["APP_VER"] });
-                    Image image = VitaPackageHelper.Helper.BytesToImage(package.icon);
+                    String iconFile = package.sfoData["CONTENT_ID"].Length > 0 ? package.sfoData["CONTENT_ID"] : package.sfoData["TITLE"];
+                    iconFile = "icons//" + iconFile + ".jpg";
+                    Image image = Image.FromFile(iconFile);
+
                     if(image != null)
                     {
                         iconImageList.Images.Add(image);
@@ -118,7 +121,6 @@ namespace VitaGameManagement_CSharp
             this.reloadSetting();
             if (libraryPath.Text != "")
             {
-                packages = VitaPackageHelper.Helper.loadPackages(libraryPath.Text);
                 this.initGameLibrary();
             }
         }
