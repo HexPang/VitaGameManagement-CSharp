@@ -26,16 +26,14 @@ namespace VitaPackageHelper
             Byte[] image = null;
             try
             {
-                using (FileStream zipToOpen = new FileStream(fileName, FileMode.Open))
+                string zipPath = fileName;
+                ZipArchive archive;
+                using (archive = ZipFile.Open(zipPath, ZipArchiveMode.Read))
                 {
-                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-                    {
-                        foreach (ZipArchiveEntry entry in archive.Entries)
-                        {
-                            if (entry.Name.Equals("icon0.png"))
-                            {
-                                using (BinaryReader reader = new BinaryReader(entry.Open()))
-                                {
+                    dynamic entry = archive.GetEntry("sce_sys/icon0.png");
+               
+                using (BinaryReader reader = new BinaryReader(entry.Open()))
+                   {
                                     MemoryStream ms = new MemoryStream();
                                     Byte[] buffer = reader.ReadBytes(2048);
                                     while(buffer.Length > 0)
@@ -45,11 +43,7 @@ namespace VitaPackageHelper
                                     }
                                     image = ms.ToArray();
                                     ms.Close();
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                   }
                 }
             }
             catch (Exception ex)
