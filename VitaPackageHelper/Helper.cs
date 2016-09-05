@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace VitaPackageHelper
 {
@@ -23,6 +25,7 @@ namespace VitaPackageHelper
 
         public static Byte[] loadIconFromPackage(String fileName)
         {
+			MemoryStream ms = new MemoryStream();
             Byte[] image = null;
             try
             {
@@ -36,15 +39,13 @@ namespace VitaPackageHelper
                             {
                                 using (BinaryReader reader = new BinaryReader(entry.Open()))
                                 {
-                                    MemoryStream ms = new MemoryStream();
+                                    
                                     Byte[] buffer = reader.ReadBytes(2048);
                                     while(buffer.Length > 0)
                                     {
                                         ms.Write(buffer, 0, buffer.Length);
                                         buffer = reader.ReadBytes(2048);
                                     }
-                                    image = ms.ToArray();
-                                    ms.Close();
                                     break;
                                 }
                             }
@@ -56,7 +57,27 @@ namespace VitaPackageHelper
             {
                 throw ex;
             }
-            GC.Collect();
+			Image img = Image.FromStream(ms);
+			Bitmap bmp = new Bitmap(48, 48);
+			Graphics g = Graphics.FromImage(bmp);
+			g.Clear(Color.Transparent);   
+			g.CompositingQuality = CompositingQuality.HighQuality;
+			g.SmoothingMode = SmoothingMode.HighQuality;
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			g.DrawImage(img, new Rectangle(0, 0, 48, 48), 0, 0, 48,48, GraphicsUnit.Pixel);
+			g.Dispose(); 
+			EncoderParameters encoderParams = new EncoderParameters();
+			long[] quality = new long[1];
+			quality[0] = 100;
+			EncoderParameter encoderParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+			encoderParams.Param[0] = encoderParam;
+			img.Dispose();
+			ms.Close();
+
+			GC.Collect();
+			img = bmp;
+			img.Save(ms, ImageFormat.Jpeg);
+			image = ms.ToArray();
             return image;
         }
 
@@ -267,11 +288,6 @@ namespace VitaPackageHelper
             }
             
             return sfo;
-        }
-
-        public static PATCH_RESULT patchPackage(string file, string patchFile, Func<object> p)
-        {
-            throw new NotImplementedException();
         }
     }
 }
