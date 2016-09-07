@@ -139,23 +139,24 @@ namespace VitaGameManagement_CSharp
             {
                 if (queueList.Count > 0)
                 {
+                    FTPQueue queue = queueList[0];
+                    FileInfo fileInf = new FileInfo(queue.file);
+                    queue.total = fileInf.Length;
+                    currentQueue = queue;
+                    string file = String.Format("/ux0:/{0}", fileInf.Name);
+
+
+                    FileStream fs = fileInf.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
                     try
                     {
-                        FTPQueue queue = queueList[0];
-                        FileInfo fileInf = new FileInfo(queue.file);
-                        queue.total = fileInf.Length;
-                        currentQueue = queue;
-                        string file = String.Format("/ux0:/{0}",fileInf.Name);
-                        //string url = String.Format("ftp://127.0.0.1:21/{2}", ip, port, fileInf.Name);
-
-
+                        
                         using (FtpClient conn = new FtpClient())
                         {
                             conn.Host = ip;
                             conn.Port = int.Parse(port);
                             conn.Credentials = new NetworkCredential("anonymous", "");
 
-                            FileStream fs = fileInf.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                             using (Stream strm = conn.OpenWrite(file))
                             {
                                 try
@@ -201,9 +202,12 @@ namespace VitaGameManagement_CSharp
                     catch (Exception ex)
                     {
                         error = ex.Message;
+                    } finally
+                    {
+                        fs.Close();
                     }
                 }
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
             }
         }
     }

@@ -44,6 +44,7 @@ namespace VitaGameManagement_CSharp
             ConfigurationManager.AddUpdateAppSettings("library", libraryPath.Text);
             ConfigurationManager.AddUpdateAppSettings("vita_ip", vita_ip.Text);
             ConfigurationManager.AddUpdateAppSettings("vita_port", vita_port.Text);
+            ConfigurationManager.AddUpdateAppSettings("cma_path", cma_path.Text);
             this.initGameLibrary();
             this.reloadSetting();
         }
@@ -104,7 +105,7 @@ namespace VitaGameManagement_CSharp
             libraryPath.Text = ConfigurationManager.ReadSetting("library");
             vita_ip.Text = ConfigurationManager.ReadSetting("vita_ip");
             vita_port.Text = ConfigurationManager.ReadSetting("vita_port");
-
+            cma_path.Text = ConfigurationManager.ReadSetting("cma_path");
             if (vita_ip.Text != "" && vita_port.Text != "")
             {
                 manager = FTPManager.instance(vita_ip.Text, vita_port.Text);
@@ -127,17 +128,96 @@ namespace VitaGameManagement_CSharp
 
         private void uploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(GameListView.SelectedItems.Count == 1)
-            {
-                ListViewItem item = GameListView.SelectedItems[0];
-                String file = item.SubItems[4].Text;
-                manager.addToQueue(file,item.SubItems[0].Text,item);
-            }
+            
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
-
+            pSPSaveDataToolStripMenuItem.DropDownItems.Clear();
+            if(cma_path.Text.Length > 0 && GameListView.SelectedItems.Count == 1)
+            {
+                pSPSaveDataToolStripMenuItem.Enabled = true;
+                string folder = cma_path.Text;
+                string[] users = Directory.GetDirectories(folder + "/PSAVEDATA");
+                foreach(string user in users)
+                {
+                    DirectoryInfo dirInfo = new DirectoryInfo(user);
+                    ToolStripMenuItem item = new ToolStripMenuItem(dirInfo.Name);
+                    pSPSaveDataToolStripMenuItem.DropDownItems.Add(item);
+                    string[] games = Directory.GetDirectories(user);
+                    foreach(string game in games)
+                    {
+                        DirectoryInfo gameInfo = new DirectoryInfo(game);
+                        ToolStripMenuItem gameItem = new ToolStripMenuItem(gameInfo.Name);
+                        item.DropDownItems.Add(gameItem);
+                        gameItem.Tag = dirInfo.Name + "/" + gameInfo.Name;
+                        gameItem.Click += GameItem_Click;
+                        if (File.Exists(game + "/param.sfo"))
+                        {
+                            Dictionary<string, string> sfo = VitaPackageHelper.Helper.parserSFO(game + "/param.sfo");
+                            if (sfo["TITLE"] != null)
+                            {
+                                gameItem.Text = sfo["TITLE"];
+                            }
+                            if(File.Exists(game + "/ICON0.PNG"))
+                            {
+                                gameItem.Image = Image.FromFile(game + "/ICON0.PNG");
+                            }
+                        }
+                    }
+                }
+            }else
+            {
+                pSPSaveDataToolStripMenuItem.Enabled = false;
+            }
+        }
+        private void BeginUpdateListItemState(ListViewItem item,string text)
+        {
+            UpdatePatchingMessageDelegate upmd = new UpdatePatchingMessageDelegate(UpdatePatchingMessage);
+            this.BeginInvoke(upmd, item, text);
+        }
+        private delegate void CopyVPKToFolder(string source,string dest,ListViewItem item);
+        private void CopyFileAsync(string source,string dest,ListViewItem item)
+        {
+            BeginUpdateListItemState(item, "Copying...");
+            FileStream fs = File.OpenRead(source);
+            if (File.Exists(dest))
+            {
+                File.Delete(dest);
+            }
+            FileStream fs1 = File.Create(dest);
+            Byte[] buffer = new Byte[2048];
+            int read = fs.Read(buffer, 0, 2048);
+            long copied = 0;
+            long total = new FileInfo(source).Length;
+            while(read > 0)
+            {
+                fs1.Write(buffer, 0, read);
+                copied += read;
+                BeginUpdateListItemState(item, String.Format("{0:00.0}%", copied / total * 100));
+                read = fs.Read(buffer, 0, 2048);
+            }
+            fs1.Flush();
+            fs1.Close();
+            fs.Close();
+            BeginUpdateListItemState(item, "Done.");
+            MessageBox.Show("File as been copied as GAME.BIN.");
+        }
+        private void GameItem_Click(object sender, EventArgs e)
+        {
+            ToolStripItem item = sender as ToolStripItem;
+            if (item != null && GameListView.SelectedItems.Count == 1)
+            {
+                //item.tag
+                String folderName = item.Tag as String;
+                if(folderName != null)
+                {
+                    String fileName = GameListView.SelectedItems[0].SubItems[4].Text;
+                    String Path = cma_path.Text + "/PSAVEDATA/" + folderName + "/GAME.BIN";
+                    CopyVPKToFolder cvtf = new CopyVPKToFolder(this.CopyFileAsync);
+                    cvtf.BeginInvoke(fileName,Path,GameListView.SelectedItems[0],null,null);
+                }
+            }
         }
 
         private void MainForm_Validating(object sender, CancelEventArgs e)
@@ -171,7 +251,7 @@ namespace VitaGameManagement_CSharp
                                 last_uploaded = queue.uploaded;
                                 String speed_text = String.Format(new FileSizeFormatProvider(), "{0:fs}/s", speed);
                                 double progress = (double)queue.uploaded / (double)queue.total * 100;
-                                uploadProgress.Value = (int)progress;
+                                uploadProgress.Value = (int)progress > 100 ? 100 : (int)progress;
                                 text = speed_text;
                                 if (queue.obj != null)
                                 {
@@ -315,6 +395,61 @@ namespace VitaGameManagement_CSharp
         private void toolStripStatusLabel2_Click(object sender, EventArgs e)
         {
             
+        }
+
+        private void fTPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fullPakcageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (GameListView.SelectedItems.Count == 1)
+            {
+                ListViewItem item = GameListView.SelectedItems[0];
+                String file = item.SubItems[4].Text;
+                manager.addToQueue(file, item.SubItems[0].Text, item);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                if(Directory.Exists(fbd.SelectedPath + "/PSAVEDATA"))
+                {
+                    cma_path.Text = fbd.SelectedPath;
+                }else
+                {
+                    MessageBox.Show("Can not find folder PSAVEDATA in this path.");
+                }
+                
+            }
+        }
+
+        private void cMAToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private delegate void SplitPackageDelegate(string file,ListViewItem item);
+        private void SplitPackageAsync(string file,ListViewItem item)
+        {
+            BeginUpdateListItemState(item, "Working...");
+            string mini_file = VitaPackageHelper.Helper.splitPackage(item.SubItems[4].Text);
+            BeginUpdateListItemState(item, "Uploading...");
+            manager.addToQueue(mini_file, item.SubItems[0].Text, item);
+        }
+        private void splitTransferToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(GameListView.SelectedItems.Count == 1)
+            {
+                ListViewItem item = GameListView.SelectedItems[0];
+                //splitPackage
+                SplitPackageDelegate spd = new SplitPackageDelegate(SplitPackageAsync);
+                spd.BeginInvoke(item.SubItems[4].Text, item, null, null);
+            }
         }
     }
 }
