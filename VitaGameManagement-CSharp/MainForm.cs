@@ -44,6 +44,7 @@ namespace VitaGameManagement_CSharp
             ConfigurationManager.AddUpdateAppSettings("library", libraryPath.Text);
             ConfigurationManager.AddUpdateAppSettings("vita_ip", vita_ip.Text);
             ConfigurationManager.AddUpdateAppSettings("vita_port", vita_port.Text);
+            ConfigurationManager.AddUpdateAppSettings("cma_path", cma_path.Text);
             this.initGameLibrary();
             this.reloadSetting();
         }
@@ -104,7 +105,7 @@ namespace VitaGameManagement_CSharp
             libraryPath.Text = ConfigurationManager.ReadSetting("library");
             vita_ip.Text = ConfigurationManager.ReadSetting("vita_ip");
             vita_port.Text = ConfigurationManager.ReadSetting("vita_port");
-
+            cma_path.Text = ConfigurationManager.ReadSetting("cma_path");
             if (vita_ip.Text != "" && vita_port.Text != "")
             {
                 manager = FTPManager.instance(vita_ip.Text, vita_port.Text);
@@ -132,7 +133,65 @@ namespace VitaGameManagement_CSharp
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
         {
+            pSPSaveDataToolStripMenuItem.DropDownItems.Clear();
+            if(cma_path.Text.Length > 0 && GameListView.SelectedItems.Count == 1)
+            {
+                pSPSaveDataToolStripMenuItem.Enabled = true;
+                string folder = cma_path.Text;
+                string[] users = Directory.GetDirectories(folder + "/PSAVEDATA");
+                foreach(string user in users)
+                {
+                    DirectoryInfo dirInfo = new DirectoryInfo(user);
+                    ToolStripMenuItem item = new ToolStripMenuItem(dirInfo.Name);
+                    pSPSaveDataToolStripMenuItem.DropDownItems.Add(item);
+                    string[] games = Directory.GetDirectories(user);
+                    foreach(string game in games)
+                    {
+                        DirectoryInfo gameInfo = new DirectoryInfo(game);
+                        ToolStripMenuItem gameItem = new ToolStripMenuItem(gameInfo.Name);
+                        item.DropDownItems.Add(gameItem);
+                        gameItem.Tag = dirInfo.Name + "/" + gameInfo.Name;
+                        gameItem.Click += GameItem_Click;
+                        if (File.Exists(game + "/param.sfo"))
+                        {
+                            Dictionary<string, string> sfo = VitaPackageHelper.Helper.parserSFO(game + "/param.sfo");
+                            if (sfo["TITLE"] != null)
+                            {
+                                gameItem.Text = sfo["TITLE"];
+                            }
+                            if(File.Exists(game + "/ICON0.PNG"))
+                            {
+                                gameItem.Image = Image.FromFile(game + "/ICON0.PNG");
+                            }
+                        }
+                    }
+                }
+            }else
+            {
+                pSPSaveDataToolStripMenuItem.Enabled = false;
+            }
+        }
 
+        private delegate void CopyVPKToFolder(string folder);
+        private void CopyFileAsync(string source,string dest)
+        {
+            File.Copy(source, dest);
+            MessageBox.Show("Success!");
+        }
+        private void GameItem_Click(object sender, EventArgs e)
+        {
+            ToolStripItem item = sender as ToolStripItem;
+            if (item != null && GameListView.SelectedItems.Count == 1)
+            {
+                //item.tag
+                String folderName = item.Tag as String;
+                if(folderName != null)
+                {
+                    String fileName = GameListView.SelectedItems[0].SubItems[4].Text;
+                    String Path = cma_path.Text + "PSAVEDATA/" + folderName + "/GAME.BIN";
+                    CopyVPKToFolder cvtf = new CopyVPKToFolder();
+                }
+            }
         }
 
         private void MainForm_Validating(object sender, CancelEventArgs e)
@@ -325,6 +384,27 @@ namespace VitaGameManagement_CSharp
                 String file = item.SubItems[4].Text;
                 manager.addToQueue(file, item.SubItems[0].Text, item);
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                if(Directory.Exists(fbd.SelectedPath + "/PSAVEDATA"))
+                {
+                    cma_path.Text = fbd.SelectedPath;
+                }else
+                {
+                    MessageBox.Show("Can not find folder PSAVEDATA in this path.");
+                }
+                
+            }
+        }
+
+        private void cMAToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

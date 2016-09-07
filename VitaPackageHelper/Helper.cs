@@ -195,6 +195,55 @@ namespace VitaPackageHelper
             return PATCH_RESULT.SUCCESS;
 		}
 
+        public static Dictionary<string,string> parserSFO(String file)
+        {
+            Dictionary<string, string> sfo = new Dictionary<string, string>();
+            using (BinaryReader reader = new BinaryReader(File.OpenRead(file)))
+            {
+                Int32 header = reader.ReadInt32();
+                if (header == 0x46535000)
+                {
+                    Byte[] version = reader.ReadBytes(4);
+                    Int32 key_table_start = reader.ReadInt32();
+                    Int32 data_table_start = reader.ReadInt32();
+                    Int32 tables_entries = reader.ReadInt32();
+                    List<SFOFFSET> offsetTable = new List<SFOFFSET>();
+
+                    for (int i = 0; i < tables_entries; i++)
+                    {
+                        Int16 key_offset = reader.ReadInt16();
+                        Int16 data_format = reader.ReadInt16();
+                        Int32 data_lenght = reader.ReadInt32();
+                        Int32 data_max_lenght = reader.ReadInt32();
+                        Int32 data_offset = reader.ReadInt32();
+                        offsetTable.Add(new SFOFFSET() { key_offset = key_offset, data_format = data_format, data_lenght = data_lenght, data_max_lenght = data_max_lenght, data_offset = data_offset });
+                    }
+                    List<string> keyTable = new List<string>();
+                    for (int i = 0; i < tables_entries; i++)
+                    {
+                        //Key Here
+                        String key = "";
+                        int keyByte = reader.ReadByte();
+                        while (keyByte != 0)
+                        {
+                            key += ((char)keyByte).ToString();
+                            keyByte = reader.ReadByte();
+                        }
+                        keyTable.Add(key);
+                    }
+                    for (int i = 0; i < tables_entries; i++)
+                    {
+                        //Key Here
+                        SFOFFSET offset = offsetTable[i];
+                        Byte[] buff;
+                        buff = reader.ReadBytes(offset.data_max_lenght);
+                        string data = System.Text.Encoding.UTF8.GetString(buff, 0, offset.data_max_lenght).Replace("\0", string.Empty);
+                        sfo.Add(keyTable[i], data);
+                    }
+                }
+            }
+            return sfo;
+        }
         public static Dictionary<string, string> loadSFO(String file)
         {
 
