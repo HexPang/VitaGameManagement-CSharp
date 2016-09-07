@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Double click to Connect");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Double click to Connect");
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.vita_ip = new System.Windows.Forms.TextBox();
@@ -102,7 +102,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.07692F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.92308F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 79F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
             this.tableLayoutPanel1.Controls.Add(this.vita_ip, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
@@ -132,7 +132,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vita_ip.Location = new System.Drawing.Point(161, 30);
             this.vita_ip.Name = "vita_ip";
-            this.vita_ip.Size = new System.Drawing.Size(522, 21);
+            this.vita_ip.Size = new System.Drawing.Size(521, 21);
             this.vita_ip.TabIndex = 6;
             // 
             // label2
@@ -163,16 +163,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.libraryPath.Location = new System.Drawing.Point(161, 3);
             this.libraryPath.Name = "libraryPath";
-            this.libraryPath.Size = new System.Drawing.Size(522, 21);
+            this.libraryPath.Size = new System.Drawing.Size(521, 21);
             this.libraryPath.TabIndex = 1;
             // 
             // chooseGameFolder
             // 
             this.chooseGameFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.chooseGameFolder.Location = new System.Drawing.Point(689, 3);
+            this.chooseGameFolder.Location = new System.Drawing.Point(688, 3);
             this.chooseGameFolder.Name = "chooseGameFolder";
-            this.chooseGameFolder.Size = new System.Drawing.Size(74, 21);
+            this.chooseGameFolder.Size = new System.Drawing.Size(75, 21);
             this.chooseGameFolder.TabIndex = 2;
             this.chooseGameFolder.Text = "Choose";
             this.chooseGameFolder.UseVisualStyleBackColor = true;
@@ -182,10 +182,10 @@
             // 
             this.vita_port.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.vita_port.Location = new System.Drawing.Point(689, 30);
+            this.vita_port.Location = new System.Drawing.Point(688, 30);
             this.vita_port.MaxLength = 5;
             this.vita_port.Name = "vita_port";
-            this.vita_port.Size = new System.Drawing.Size(74, 21);
+            this.vita_port.Size = new System.Drawing.Size(75, 21);
             this.vita_port.TabIndex = 7;
             // 
             // cma_path
@@ -194,16 +194,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cma_path.Location = new System.Drawing.Point(161, 57);
             this.cma_path.Name = "cma_path";
-            this.cma_path.Size = new System.Drawing.Size(522, 21);
+            this.cma_path.Size = new System.Drawing.Size(521, 21);
             this.cma_path.TabIndex = 9;
             // 
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(689, 57);
+            this.button2.Location = new System.Drawing.Point(688, 57);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(74, 21);
+            this.button2.Size = new System.Drawing.Size(75, 21);
             this.button2.TabIndex = 10;
             this.button2.Text = "Choose";
             this.button2.UseVisualStyleBackColor = true;
@@ -224,9 +224,9 @@
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(689, 84);
+            this.button1.Location = new System.Drawing.Point(688, 84);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(74, 21);
+            this.button1.Size = new System.Drawing.Size(75, 21);
             this.button1.TabIndex = 3;
             this.button1.Text = "Apply";
             this.button1.UseVisualStyleBackColor = true;
@@ -305,7 +305,7 @@
             this.toolStripMenuItem1,
             this.patchToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 76);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(120, 54);
             this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // uploadToolStripMenuItem
@@ -314,7 +314,7 @@
             this.fTPToolStripMenuItem,
             this.cMAToolStripMenuItem});
             this.uploadToolStripMenuItem.Name = "uploadToolStripMenuItem";
-            this.uploadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.uploadToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.uploadToolStripMenuItem.Text = "Upload";
             this.uploadToolStripMenuItem.Click += new System.EventHandler(this.uploadToolStripMenuItem_Click);
             // 
@@ -324,14 +324,14 @@
             this.fullPakcageToolStripMenuItem,
             this.splitTransferToolStripMenuItem});
             this.fTPToolStripMenuItem.Name = "fTPToolStripMenuItem";
-            this.fTPToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fTPToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
             this.fTPToolStripMenuItem.Text = "FTP";
             this.fTPToolStripMenuItem.Click += new System.EventHandler(this.fTPToolStripMenuItem_Click);
             // 
             // fullPakcageToolStripMenuItem
             // 
             this.fullPakcageToolStripMenuItem.Name = "fullPakcageToolStripMenuItem";
-            this.fullPakcageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.fullPakcageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fullPakcageToolStripMenuItem.Text = "Full Pakcage";
             this.fullPakcageToolStripMenuItem.Click += new System.EventHandler(this.fullPakcageToolStripMenuItem_Click);
             // 
@@ -347,7 +347,7 @@
             this.cMAToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.pSPSaveDataToolStripMenuItem});
             this.cMAToolStripMenuItem.Name = "cMAToolStripMenuItem";
-            this.cMAToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cMAToolStripMenuItem.Size = new System.Drawing.Size(104, 22);
             this.cMAToolStripMenuItem.Text = "CMA";
             this.cMAToolStripMenuItem.Click += new System.EventHandler(this.cMAToolStripMenuItem_Click);
             // 
@@ -360,12 +360,12 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(116, 6);
             // 
             // patchToolStripMenuItem
             // 
             this.patchToolStripMenuItem.Name = "patchToolStripMenuItem";
-            this.patchToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.patchToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.patchToolStripMenuItem.Text = "Patch";
             this.patchToolStripMenuItem.Click += new System.EventHandler(this.patchToolStripMenuItem_Click);
             // 
@@ -438,10 +438,10 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.folderTree.Location = new System.Drawing.Point(3, 3);
             this.folderTree.Name = "folderTree";
-            treeNode3.Name = "节点0";
-            treeNode3.Text = "Double click to Connect";
+            treeNode1.Name = "节点0";
+            treeNode1.Text = "Double click to Connect";
             this.folderTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode3});
+            treeNode1});
             this.folderTree.Size = new System.Drawing.Size(173, 435);
             this.folderTree.TabIndex = 0;
             this.folderTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.folderTree_NodeMouseClick);
@@ -500,7 +500,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Name = "MainForm";
-            this.Text = "Vita Game Manager v0.1.4";
+            this.Text = "Vita Game Manager v0.1.5";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Validating += new System.ComponentModel.CancelEventHandler(this.MainForm_Validating);
             this.tabPage2.ResumeLayout(false);
