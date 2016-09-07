@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Double click to Connect");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Double click to Connect");
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.vita_ip = new System.Windows.Forms.TextBox();
@@ -74,6 +74,9 @@
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.uploadProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.VitaRootFolderList = new System.Windows.Forms.ComboBox();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.tabPage2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -81,6 +84,7 @@
             this.tabControl1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPage2
@@ -102,7 +106,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.07692F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.92308F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 81F));
             this.tableLayoutPanel1.Controls.Add(this.vita_ip, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
@@ -132,7 +136,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vita_ip.Location = new System.Drawing.Point(161, 30);
             this.vita_ip.Name = "vita_ip";
-            this.vita_ip.Size = new System.Drawing.Size(521, 21);
+            this.vita_ip.Size = new System.Drawing.Size(520, 21);
             this.vita_ip.TabIndex = 6;
             // 
             // label2
@@ -163,16 +167,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.libraryPath.Location = new System.Drawing.Point(161, 3);
             this.libraryPath.Name = "libraryPath";
-            this.libraryPath.Size = new System.Drawing.Size(521, 21);
+            this.libraryPath.Size = new System.Drawing.Size(520, 21);
             this.libraryPath.TabIndex = 1;
             // 
             // chooseGameFolder
             // 
             this.chooseGameFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.chooseGameFolder.Location = new System.Drawing.Point(688, 3);
+            this.chooseGameFolder.Location = new System.Drawing.Point(687, 3);
             this.chooseGameFolder.Name = "chooseGameFolder";
-            this.chooseGameFolder.Size = new System.Drawing.Size(75, 21);
+            this.chooseGameFolder.Size = new System.Drawing.Size(76, 21);
             this.chooseGameFolder.TabIndex = 2;
             this.chooseGameFolder.Text = "Choose";
             this.chooseGameFolder.UseVisualStyleBackColor = true;
@@ -182,10 +186,10 @@
             // 
             this.vita_port.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.vita_port.Location = new System.Drawing.Point(688, 30);
+            this.vita_port.Location = new System.Drawing.Point(687, 30);
             this.vita_port.MaxLength = 5;
             this.vita_port.Name = "vita_port";
-            this.vita_port.Size = new System.Drawing.Size(75, 21);
+            this.vita_port.Size = new System.Drawing.Size(76, 21);
             this.vita_port.TabIndex = 7;
             // 
             // cma_path
@@ -194,16 +198,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cma_path.Location = new System.Drawing.Point(161, 57);
             this.cma_path.Name = "cma_path";
-            this.cma_path.Size = new System.Drawing.Size(521, 21);
+            this.cma_path.Size = new System.Drawing.Size(520, 21);
             this.cma_path.TabIndex = 9;
             // 
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(688, 57);
+            this.button2.Location = new System.Drawing.Point(687, 57);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 21);
+            this.button2.Size = new System.Drawing.Size(76, 21);
             this.button2.TabIndex = 10;
             this.button2.Text = "Choose";
             this.button2.UseVisualStyleBackColor = true;
@@ -224,9 +228,9 @@
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(688, 84);
+            this.button1.Location = new System.Drawing.Point(687, 84);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 21);
+            this.button1.Size = new System.Drawing.Size(76, 21);
             this.button1.TabIndex = 3;
             this.button1.Text = "Apply";
             this.button1.UseVisualStyleBackColor = true;
@@ -391,6 +395,8 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.VitaRootFolderList);
+            this.tabPage3.Controls.Add(this.toolStrip1);
             this.tabPage3.Controls.Add(this.label3);
             this.tabPage3.Controls.Add(this.fileListView);
             this.tabPage3.Controls.Add(this.folderTree);
@@ -417,9 +423,9 @@
             this.fileListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.fileListView.LargeImageList = this.imageList1;
-            this.fileListView.Location = new System.Drawing.Point(182, 3);
+            this.fileListView.Location = new System.Drawing.Point(182, 28);
             this.fileListView.Name = "fileListView";
-            this.fileListView.Size = new System.Drawing.Size(593, 196);
+            this.fileListView.Size = new System.Drawing.Size(593, 171);
             this.fileListView.SmallImageList = this.imageList1;
             this.fileListView.StateImageList = this.imageList1;
             this.fileListView.TabIndex = 1;
@@ -436,13 +442,13 @@
             // 
             this.folderTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.folderTree.Location = new System.Drawing.Point(3, 3);
+            this.folderTree.Location = new System.Drawing.Point(182, 217);
             this.folderTree.Name = "folderTree";
-            treeNode1.Name = "节点0";
-            treeNode1.Text = "Double click to Connect";
+            treeNode2.Name = "节点0";
+            treeNode2.Text = "Double click to Connect";
             this.folderTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
-            this.folderTree.Size = new System.Drawing.Size(173, 435);
+            treeNode2});
+            this.folderTree.Size = new System.Drawing.Size(173, 39);
             this.folderTree.TabIndex = 0;
             this.folderTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.folderTree_NodeMouseClick);
             this.folderTree.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.folderTree_NodeMouseDoubleClick);
@@ -492,6 +498,34 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton1});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(778, 25);
+            this.toolStrip1.TabIndex = 3;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // VitaRootFolderList
+            // 
+            this.VitaRootFolderList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VitaRootFolderList.FormattingEnabled = true;
+            this.VitaRootFolderList.Location = new System.Drawing.Point(3, 28);
+            this.VitaRootFolderList.Name = "VitaRootFolderList";
+            this.VitaRootFolderList.Size = new System.Drawing.Size(121, 20);
+            this.VitaRootFolderList.TabIndex = 4;
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(147, 22);
+            this.toolStripButton1.Text = "Connect To VitaShell";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -513,6 +547,8 @@
             this.tabPage3.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -563,6 +599,9 @@
         private System.Windows.Forms.TextBox cma_path;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox VitaRootFolderList;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
     }
 }
 

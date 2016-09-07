@@ -451,5 +451,19 @@ namespace VitaGameManagement_CSharp
                 spd.BeginInvoke(item.SubItems[4].Text, item, null, null);
             }
         }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            if(manager != null)
+            {
+                IEnumerable<string> folders = manager.listFolder("/");
+
+                VitaRootFolderList.Items.Clear();
+                foreach (string folder in folders)
+                {
+                    VitaRootFolderList.Items.Add(folder);
+                }
+            }
+        }
     }
 }

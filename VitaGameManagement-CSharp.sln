@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VitaGameManagement-CSharp",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VitaPackageHelper", "VitaPackageHelper\VitaPackageHelper.csproj", "{866A7483-EC96-42D2-97EE-7CB27BD750D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VGMPlugin", "VGMPlugin\VGMPlugin.csproj", "{7BE194A6-1DF8-4B5A-84F0-DB11D7306C9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{866A7483-EC96-42D2-97EE-7CB27BD750D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{866A7483-EC96-42D2-97EE-7CB27BD750D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{866A7483-EC96-42D2-97EE-7CB27BD750D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BE194A6-1DF8-4B5A-84F0-DB11D7306C9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BE194A6-1DF8-4B5A-84F0-DB11D7306C9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BE194A6-1DF8-4B5A-84F0-DB11D7306C9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BE194A6-1DF8-4B5A-84F0-DB11D7306C9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
