@@ -244,6 +244,52 @@ namespace VitaPackageHelper
             }
             return sfo;
         }
+
+        public static string splitPackage(String file)
+        {
+            FileInfo fi = new FileInfo(file);
+            Dictionary<String, String> sfo = loadSFO(file);
+
+            String fileName = fi.Name;
+            if(sfo.Count > 0)
+            {
+                if(sfo["CONTENT_ID"].Length > 0)
+                {
+                    fileName = sfo["CONTENT_ID"].Split('_')[0].Split('-')[1];
+
+                }
+            }else
+            {
+                fileName = fileName.Substring(0, fileName.Length - fi.Extension.Length);
+            }
+            
+            String MINI_FILE = fi.Directory.FullName + "/" + fileName  + ".MINI.VPK";
+            String SPLIT_DIR = fi.Directory.FullName + "/" + fileName + "_SPLIT";
+            String MINI_DIR = fi.Directory.FullName + "/" + fileName + "_MINI";
+            if (Directory.Exists(SPLIT_DIR))
+            {
+                Directory.Delete(SPLIT_DIR, true);
+            }
+            if (Directory.Exists(MINI_DIR))
+            {
+                Directory.Delete(MINI_DIR, true);
+            }
+            if (File.Exists(MINI_FILE))
+            {
+                File.Delete(MINI_FILE);
+            }
+            Directory.CreateDirectory(SPLIT_DIR);
+            Directory.CreateDirectory(MINI_DIR);
+            ZipFile.ExtractToDirectory(file, SPLIT_DIR);
+            File.Move(SPLIT_DIR + "/eboot.bin", MINI_DIR + "/eboot.bin");
+            Directory.Move(SPLIT_DIR + "/sce_sys", MINI_DIR+ "/sce_sys");
+            Directory.Move(SPLIT_DIR + "/sce_module", MINI_DIR + "/sce_module");
+            ZipFile.CreateFromDirectory(MINI_DIR, MINI_FILE);
+            Directory.Delete(MINI_DIR,true);
+
+            return MINI_FILE;
+        }
+
         public static Dictionary<string, string> loadSFO(String file)
         {
 
