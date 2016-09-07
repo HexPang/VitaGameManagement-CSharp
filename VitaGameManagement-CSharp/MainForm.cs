@@ -127,12 +127,7 @@ namespace VitaGameManagement_CSharp
 
         private void uploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(GameListView.SelectedItems.Count == 1)
-            {
-                ListViewItem item = GameListView.SelectedItems[0];
-                String file = item.SubItems[4].Text;
-                manager.addToQueue(file,item.SubItems[0].Text,item);
-            }
+            
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
@@ -315,6 +310,21 @@ namespace VitaGameManagement_CSharp
         private void toolStripStatusLabel2_Click(object sender, EventArgs e)
         {
             
+        }
+
+        private void fTPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fullPakcageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (GameListView.SelectedItems.Count == 1)
+            {
+                ListViewItem item = GameListView.SelectedItems[0];
+                String file = item.SubItems[4].Text;
+                manager.addToQueue(file, item.SubItems[0].Text, item);
+            }
         }
     }
 }
