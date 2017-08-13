@@ -521,7 +521,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Name = "MainForm";
-            this.Text = "Vita Game Manager v0.1.5";
+            this.Text = "Vita Game Manager v0.1.6";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Validating += new System.ComponentModel.CancelEventHandler(this.MainForm_Validating);
             this.tabPage2.ResumeLayout(false);
