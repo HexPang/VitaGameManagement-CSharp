@@ -119,7 +119,8 @@ namespace VitaGameManagement_CSharp
             catch (Exception)
             {
             }
-            copyManager = FileCopyManager.instance(USBDrive.Items[USBDrive.SelectedIndex].ToString());
+            if(USBDrive.SelectedIndex > -1)
+                copyManager = FileCopyManager.instance(USBDrive.Items[USBDrive.SelectedIndex].ToString());
             copyManager.StartCopyWorker();
             if (vita_ip.Text != "" && vita_port.Text != "")
             {
