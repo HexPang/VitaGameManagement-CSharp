@@ -10,6 +10,7 @@ namespace VitaPackageHelper
 {
     public static class Helper
     {
+        public static string current = null;
         /// <summary>
         /// Convert Byte[] to Image
         /// </summary>
@@ -266,6 +267,7 @@ namespace VitaPackageHelper
             String MINI_FILE = fi.Directory.FullName + "/" + fileName  + ".MINI.VPK";
             String SPLIT_DIR = fi.Directory.FullName + "/" + fileName + "_SPLIT";
             String MINI_DIR = fi.Directory.FullName + "/" + fileName + "_MINI";
+            current = SPLIT_DIR;
             if (Directory.Exists(SPLIT_DIR))
             {
                 Directory.Delete(SPLIT_DIR, true);

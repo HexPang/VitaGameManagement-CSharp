@@ -15,14 +15,16 @@ namespace VitaGameManagement_CSharp
 {
     public partial class MainForm : Form
     {
+
         private delegate void LibraryAsyncEventHandler();
         private delegate void drawGameListDelegate();
         private delegate void PatchingDelegate(string file, string patchFile, ListViewItem listViewItem);
         private delegate void PatchingMessage(string message);
         private delegate void UpdatePatchingMessageDelegate(ListViewItem item, string message);
         private delegate void LoadLibraryDelegate();
-
+        private string SplitQueue = null;
         private FTPManager manager;
+        private FileCopyManager copyManager;
         private List<VitaPackageHelper.VitaPackage> packages;
         private bool libraryLoading = false;
         public MainForm()
@@ -45,6 +47,8 @@ namespace VitaGameManagement_CSharp
             ConfigurationManager.AddUpdateAppSettings("vita_ip", vita_ip.Text);
             ConfigurationManager.AddUpdateAppSettings("vita_port", vita_port.Text);
             ConfigurationManager.AddUpdateAppSettings("cma_path", cma_path.Text);
+            ConfigurationManager.AddUpdateAppSettings("connection_type", String.Format("{0}", connectionType.SelectedIndex));
+            ConfigurationManager.AddUpdateAppSettings("usb_drive", String.Format("{0}", USBDrive.SelectedIndex));
             this.initGameLibrary();
             this.reloadSetting();
         }
@@ -106,6 +110,17 @@ namespace VitaGameManagement_CSharp
             vita_ip.Text = ConfigurationManager.ReadSetting("vita_ip");
             vita_port.Text = ConfigurationManager.ReadSetting("vita_port");
             cma_path.Text = ConfigurationManager.ReadSetting("cma_path");
+            loadUSBDrive();
+            connectionType.SelectedIndex = ConfigurationManager.ReadSetting("connection_type") == "0" ? 0 : 1;
+            try
+            {
+                USBDrive.SelectedIndex = Int16.Parse(ConfigurationManager.ReadSetting("usb_drive"));
+            }
+            catch (Exception)
+            {
+            }
+            copyManager = FileCopyManager.instance(USBDrive.Items[USBDrive.SelectedIndex].ToString());
+            copyManager.StartCopyWorker();
             if (vita_ip.Text != "" && vita_port.Text != "")
             {
                 manager = FTPManager.instance(vita_ip.Text, vita_port.Text);
@@ -226,116 +241,168 @@ namespace VitaGameManagement_CSharp
         }
 
         private long last_uploaded;
+        public static long GetDirectoryLength(string dirPath)
+        {
+            //判断给定的路径是否存在,如果不存在则退出
+            if (!Directory.Exists(dirPath))
+                return 0;
+            long len = 0;
+
+            //定义一个DirectoryInfo对象
+            DirectoryInfo di = new DirectoryInfo(dirPath);
+
+            //通过GetFiles方法,获取di目录中的所有文件的大小
+            foreach (FileInfo fi in di.GetFiles())
+            {
+                len += fi.Length;
+            }
+
+            //获取di中所有的文件夹,并存到一个新的对象数组中,以进行递归
+            DirectoryInfo[] dis = di.GetDirectories();
+            if (dis.Length > 0)
+            {
+                for (int i = 0; i < dis.Length; i++)
+                {
+                    len += GetDirectoryLength(dis[i].FullName);
+                }
+            }
+            return len;
+        }
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (manager != null)
+            if(SplitQueue != null)
             {
-                if (manager.isWorking())
+                long total = GetDirectoryLength(VitaPackageHelper.Helper.current);
+                string fileSize = String.Format(new FileSizeFormatProvider(), "{0:fs}", total);
+                ftpStatus.Text = "Processing ... " + fileSize;
+                return;
+            }
+            if(connectionType.SelectedIndex == 1)
+            {
+                toolStripStatusLabel1.Text = "FTP Service:";
+                if (manager != null)
                 {
-                    if(manager.error != "" && manager.error != null)
+                    if (manager.isWorking())
                     {
-                        ftpStatus.Text = manager.error;
-                    }else
-                    {
-                        if (manager.getQueueCount() > 0)
+                        if (manager.error != "" && manager.error != null)
                         {
-                            FTPQueue queue = manager.currentQueue;
-                            String text = "";
-                            if(queue != null)
-                            {
-                                if(last_uploaded == 0)
-                                {
-                                    last_uploaded = queue.uploaded;
-                                }
-                                long speed = queue.uploaded - last_uploaded;
-                                last_uploaded = queue.uploaded;
-                                String speed_text = String.Format(new FileSizeFormatProvider(), "{0:fs}/s", speed);
-                                double progress = (double)queue.uploaded / (double)queue.total * 100;
-                                uploadProgress.Value = (int)progress > 100 ? 100 : (int)progress;
-                                text = speed_text;
-                                if (queue.obj != null)
-                                {
-                                    ListViewItem item = queue.obj as ListViewItem;
-                                    if (item != null)
-                                    {
-                                        if(uploadProgress.Value == 100)
-                                        {
-                                            item.SubItems[5].Text = "Done";
-                                        }
-                                        else
-                                        {
-                                            item.SubItems[5].Text = uploadProgress.Value + "%";
-                                        }
-                                        
-                                    }
-                                }
-                            }
-                            ftpStatus.Text = String.Format("{0} Queue {1}", manager.getQueueCount(), text);
-
+                            ftpStatus.Text = manager.error;
                         }
                         else
                         {
-                            ftpStatus.Text = "Idle";
+                            if (manager.getQueueCount() > 0)
+                            {
+                                FTPQueue queue = manager.currentQueue;
+                                String text = "";
+                                if (queue != null)
+                                {
+                                    if (last_uploaded == 0)
+                                    {
+                                        last_uploaded = queue.uploaded;
+                                    }
+                                    long speed = queue.uploaded - last_uploaded;
+                                    last_uploaded = queue.uploaded;
+                                    String speed_text = String.Format(new FileSizeFormatProvider(), "{0:fs}/s", speed);
+                                    double progress = (double)queue.uploaded / (double)queue.total * 100;
+                                    uploadProgress.Value = (int)progress > 100 ? 100 : (int)progress;
+                                    text = speed_text;
+                                    if (queue.obj != null)
+                                    {
+                                        ListViewItem item = queue.obj as ListViewItem;
+                                        if (item != null)
+                                        {
+                                            if (uploadProgress.Value == 100)
+                                            {
+                                                item.SubItems[5].Text = "Done";
+                                            }
+                                            else
+                                            {
+                                                item.SubItems[5].Text = uploadProgress.Value + "%";
+                                            }
+
+                                        }
+                                    }
+                                }
+                                ftpStatus.Text = String.Format("{0} Queue {1}", manager.getQueueCount(), text);
+
+                            }
+                            else
+                            {
+                                ftpStatus.Text = "Idle";
+                            }
                         }
+
                     }
-           
-                }else
-                {
-                    ftpStatus.Text = "Stop";
+                    else
+                    {
+                        ftpStatus.Text = "Stop";
+                    }
                 }
             }
-        }
-
-        private void folderTree_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            //Connect to FTP Server
-            if (manager != null)
+            else
             {
-                string path = "/";
-                if (e.Node.Text.StartsWith("/"))
+                toolStripStatusLabel1.Text = "USB Service:";
+                if (copyManager != null)
                 {
-                    path = e.Node.Text;
-                    e.Node.Nodes.Clear();
-                }else
-                {
-                    folderTree.Nodes.RemoveByKey("folder");
-                }
-                IEnumerable<string> folders = manager.listFolder(path);
-                
-                foreach (string folder in folders)
-                {
-                    if(path == "/")
+                    if (copyManager.isWorking())
                     {
-                        folderTree.Nodes.Add("folder", folder);
-                    }else
-                    {
-                        e.Node.Nodes.Add("folder", folder);
+                        if (copyManager.error != "" && copyManager.error != null)
+                        {
+                            ftpStatus.Text = copyManager.error;
+                        }
+                        else
+                        {
+                            if (copyManager.getQueueCount() > 0)
+                            {
+                                CopyQueue queue = copyManager.currentQueue;
+                                String text = "";
+                                if (queue != null)
+                                {
+                                    if (last_uploaded == 0)
+                                    {
+                                        last_uploaded = queue.uploaded;
+                                    }
+                                    long speed = queue.uploaded - last_uploaded;
+                                    last_uploaded = queue.uploaded;
+                                    String speed_text = String.Format(new FileSizeFormatProvider(), "{0:fs}/s", speed);
+                                    double progress = (double)queue.uploaded / (double)queue.total * 100;
+                                    uploadProgress.Value = (int)progress > 100 ? 100 : (int)progress;
+                                    text = speed_text;
+                                    if (queue.obj != null)
+                                    {
+                                        ListViewItem item = queue.obj as ListViewItem;
+                                        if (item != null)
+                                        {
+                                            if (uploadProgress.Value == 100)
+                                            {
+                                                item.SubItems[5].Text = "Done";
+                                            }
+                                            else
+                                            {
+                                                item.SubItems[5].Text = uploadProgress.Value + "%";
+                                            }
+
+                                        }
+                                    }
+                                }
+                                ftpStatus.Text = String.Format("{0} Queue {1}", copyManager.getQueueCount(), text);
+
+                            }
+                            else
+                            {
+                                ftpStatus.Text = "Idle";
+                            }
+                        }
+
                     }
-                    
+                    else
+                    {
+                        ftpStatus.Text = "Stop";
+                    }
                 }
             }
         }
-
-        private void folderTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if(manager != null)
-            {
-                if(e.Node.Text.StartsWith("/"))
-                {
-                    IEnumerable<FtpListItem> files = manager.listFile(e.Node.Text);
-                    fileListView.Items.Clear();
-                    foreach(FtpListItem file in files)
-                    {
-                        ListViewItem item = new ListViewItem();
-                        item.Text = file.Name;
-                        item.ToolTipText = String.Format(new FileSizeFormatProvider(),"{0:fs}", file.Size);
-                        item.ImageIndex = 0;
-                        fileListView.Items.Add(item);
-                    }
-                }
-            }
-        }
-
+        
 
         private void UpdatePatchingMessage(ListViewItem item,string message)
         {
@@ -441,6 +508,15 @@ namespace VitaGameManagement_CSharp
             BeginUpdateListItemState(item, "Uploading...");
             manager.addToQueue(mini_file, item.SubItems[0].Text, item);
         }
+        private void SplitPackageUSBAsync(string file, ListViewItem item)
+        {
+            BeginUpdateListItemState(item, "Working...");
+            SplitQueue = item.SubItems[4].Text;
+            string mini_file = VitaPackageHelper.Helper.splitPackage(item.SubItems[4].Text);
+            BeginUpdateListItemState(item, "Uploading...");
+            SplitQueue = null;
+            copyManager.addToQueue(mini_file, item.SubItems[0].Text, item);
+        }
         private void splitTransferToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if(GameListView.SelectedItems.Count == 1)
@@ -451,18 +527,60 @@ namespace VitaGameManagement_CSharp
                 spd.BeginInvoke(item.SubItems[4].Text, item, null, null);
             }
         }
+       
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void loadUSBDrive()
         {
-            if(manager != null)
+            USBDrive.Items.Clear();
+            DriveInfo[] allDrives = DriveInfo.GetDrives();
+            foreach (DriveInfo d in allDrives)
             {
-                IEnumerable<string> folders = manager.listFolder("/");
-
-                VitaRootFolderList.Items.Clear();
-                foreach (string folder in folders)
+                //判断是不是U盘
+                if (d.DriveType == DriveType.Removable)
                 {
-                    VitaRootFolderList.Items.Add(folder);
+                    USBDrive.Items.Add(d.RootDirectory);
                 }
+            }
+        }
+
+        private void connectionType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(connectionType.SelectedIndex == 0)
+            {
+                loadUSBDrive();
+                vita_ip.Enabled = false;
+                vita_port.Enabled = false;
+                USBDrive.Visible = true;
+            }
+            else
+            {
+                vita_ip.Enabled = true;
+                vita_port.Enabled = true;
+                USBDrive.Visible = false;
+            }
+        }
+
+        private void fullPackageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (connectionType.SelectedIndex == 0)
+            {
+                if (GameListView.SelectedItems.Count == 1)
+                {
+                    ListViewItem item = GameListView.SelectedItems[0];
+                    String file = item.SubItems[4].Text;
+                    copyManager.addToQueue(file, item.SubItems[0].Text, item);
+                }
+            }
+        }
+
+        private void splitPackageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (GameListView.SelectedItems.Count == 1)
+            {
+                ListViewItem item = GameListView.SelectedItems[0];
+                //splitPackage
+                SplitPackageDelegate spd = new SplitPackageDelegate(SplitPackageUSBAsync);
+                spd.BeginInvoke(item.SubItems[4].Text, item, null, null);
             }
         }
     }

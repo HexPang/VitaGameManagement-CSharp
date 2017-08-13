@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationManager.cs" />
+    <Compile Include="FileCopyManager.cs" />
     <Compile Include="FileSizeFormatProvider.cs" />
     <Compile Include="FTPManager.cs" />
     <Compile Include="MainForm.cs">
